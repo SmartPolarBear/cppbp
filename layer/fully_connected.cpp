@@ -11,7 +11,7 @@ using namespace std;
 cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivationFunction& af)
 	: act_func_(&af), next_(nullptr)
 {
-	id_ = this->objects_alive;
+	id_ = cppbp::layer::FullyConnected::objects_alive;
 
 	for (int i = 0; i < len; i++)
 	{
