@@ -4,10 +4,15 @@
 
 #pragma once
 
+#include <layer/layer.h>
+
+
 namespace cppbp::layer
 {
-class fully_connect
+class FullyConnected
+	: public ILayer
 {
+ public:
 
 };
 }
