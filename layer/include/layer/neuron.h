@@ -9,6 +9,8 @@
 #include <base/forward.h>
 #include <base/backprop.h>
 
+#include <optimizer/optimizer.h>
+
 #include <unordered_map>
 #include <memory>
 
@@ -17,10 +19,11 @@ namespace cppbp::layer
 class Neuron
 	: public std::enable_shared_from_this<Neuron>,
 	  public base::IForward,
-	  public base::IBackProp
+	  public base::IBackProp,
+	  public optimizer::IOptimizable
 {
  public:
-	Neuron(IActivationFunction& af, double bias);
+	explicit Neuron(IActivationFunction& af);
 
 	void set(double val);
 
@@ -34,22 +37,22 @@ class Neuron
 
 	void backprop() override;
 
+	void optimize(optimizer::IOptimizer& opt);
+
  private:
-	void update_derivative(const std::shared_ptr<Neuron>& from,double x);
+	void update_derivative(const std::shared_ptr<Neuron>& from, double x);
 
 	IActivationFunction* act_func_;
 
-	double bias_;
-
 	double value_;
 
-	double derivative_;
+	double error_;
 
-	std::unordered_map<std::shared_ptr<Neuron>, double> in_;
+	std::unordered_map<std::shared_ptr<Neuron>, std::pair<double, double>> in_;
 
 	std::unordered_map<std::shared_ptr<Neuron>, double> act_values_;
 
-	std::unordered_map<std::shared_ptr<Neuron>, double> derivative_values_;
+	std::unordered_map<std::shared_ptr<Neuron>, double> error_values_;
 
 	std::vector<std::weak_ptr<Neuron>> out_;
 };
