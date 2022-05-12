@@ -4,6 +4,10 @@
 
 #include <layer/fully_connected.h>
 
+#include <sstream>
+
+using namespace std;
+
 cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivationFunction& af)
 	: act_func_(&af), next_(nullptr)
 {
@@ -13,15 +17,19 @@ cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivati
 	}
 }
 
-void cppbp::layer::FullyConnected::connect(const std::shared_ptr<FullyConnected>& next)
+cppbp::layer::FullyConnected& cppbp::layer::FullyConnected::connect(FullyConnected& next)
 {
 	for (const auto& t : neurons_)
 	{
-		for (const auto& n : neurons_)
+		for (const auto& n : next.neurons_)
 		{
 			t->connect(n);
 		}
 	}
+	next_ = &next;
+	next.prev_ = this;
+
+	return next;
 }
 
 void cppbp::layer::FullyConnected::backprop()
@@ -62,4 +70,21 @@ void cppbp::layer::FullyConnected::set_derivatives(std::vector<double> d)
 	{
 		neurons_[i]->set_derivative(d[i]);
 	}
+}
+std::string cppbp::layer::FullyConnected::summary() const
+{
+	stringstream ss{};
+	ss << "Fully Connected [" << neurons_.size() << "]:{\n";
+	for (const auto& n : neurons_)
+	{
+		ss << "" << n->summary() << "\n";
+	}
+	ss << "}";
+	if (next_)
+	{
+		ss << "\n";
+		ss << next_->summary();
+	}
+
+	return ss.str();
 }

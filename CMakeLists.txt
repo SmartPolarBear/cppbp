@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.22)
 project(cppbp)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
-add_library(cppbp STATIC)
+add_library(cppbp STATIC main.cpp)
 
 add_subdirectory(libs)
+
 target_link_libraries(cppbp
-        PRIVATE Eigen3::Eigen)
+        INTERFACE Eigen3::Eigen)
 
 
 add_subdirectory(base)

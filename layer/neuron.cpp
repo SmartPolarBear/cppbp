@@ -5,6 +5,8 @@
 #include <layer/neuron.h>
 #include <utils/random.h>
 
+#include <sstream>
+
 using namespace std;
 
 cppbp::layer::Neuron::Neuron(cppbp::layer::IActivationFunction& af)
@@ -65,5 +67,17 @@ void cppbp::layer::Neuron::optimize(cppbp::optimizer::IOptimizer& opt)
 		in_[f].first -= opt.optimize(in_[f].first, v * act_values_[f]);
 		in_[f].second -= opt.optimize(in_[f].second, v);
 	}
+}
+string cppbp::layer::Neuron::summary() const
+{
+	stringstream ss{};
+
+	ss << "Neuron []:" << "{\n";
+	for (auto& [f, w] : in_)
+	{
+		ss << "[" << w.first << "," << w.second << "]\n";
+	}
+	ss << "}";
+	return ss.str();
 }
 

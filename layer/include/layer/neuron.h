@@ -8,6 +8,7 @@
 
 #include <base/forward.h>
 #include <base/backprop.h>
+#include <base/summary.h>
 
 #include <optimizer/optimizer.h>
 
@@ -20,6 +21,7 @@ class Neuron
 	: public std::enable_shared_from_this<Neuron>,
 	  public base::IForward,
 	  public base::IBackProp,
+	  public base::ISummary,
 	  public optimizer::IOptimizable
 {
  public:
@@ -38,6 +40,7 @@ class Neuron
 	void backprop() override;
 
 	void optimize(optimizer::IOptimizer& opt) override;
+	std::string summary() const override;
 
  private:
 	void update_error(const std::shared_ptr<Neuron>& from, double x);

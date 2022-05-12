@@ -13,14 +13,12 @@ namespace cppbp::layer
 {
 class FullyConnected
 	: public ILayer,
-	  public base::IForward,
-	  public base::IBackProp,
 	  public optimizer::IOptimizable
 {
  public:
 	explicit FullyConnected(size_t len, IActivationFunction& af);
 
-	void connect(const std::shared_ptr<FullyConnected>& next);
+	FullyConnected& connect(FullyConnected& next);
 
 	void set(std::vector<double> values);
 
@@ -31,11 +29,14 @@ class FullyConnected
 	void forward() override;
 
 	void optimize(optimizer::IOptimizer& optimizable) override;
+	std::string summary() const override;
  private:
 	IActivationFunction* act_func_{ nullptr };
 
 	std::vector<std::shared_ptr<Neuron>> neurons_{};
-	std::shared_ptr<FullyConnected> next_{};
+
+	FullyConnected* next_{};
+	FullyConnected* prev_{};
 };
 
 }
