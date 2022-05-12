@@ -29,7 +29,7 @@ void cppbp::layer::Neuron::operator()(const std::shared_ptr<Neuron>& from, doubl
 	value_ += this->act_values_[from];
 }
 
-void cppbp::layer::Neuron::update_derivative(const std::shared_ptr<Neuron>& from, double x)
+void cppbp::layer::Neuron::update_error(const std::shared_ptr<Neuron>& from, double x)
 {
 	error_ += (*act_func_).derive(value_) * x;
 	this->error_values_[from] = x;
@@ -54,7 +54,7 @@ void cppbp::layer::Neuron::backprop()
 {
 	for (auto& [prev, w] : in_)
 	{
-		prev->update_derivative(this->shared_from_this(), w.first * this->error_);
+		prev->update_error(this->shared_from_this(), w.first * this->error_);
 	}
 }
 

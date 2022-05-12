@@ -18,6 +18,6 @@ class IOptimizer
 class IOptimizable
 {
  public:
-	virtual void optimize(IOptimizable&) = 0;
+	virtual void optimize(IOptimizer&) = 0;
 };
 }

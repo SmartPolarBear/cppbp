@@ -37,23 +37,23 @@ class Neuron
 
 	void backprop() override;
 
-	void optimize(optimizer::IOptimizer& opt);
+	void optimize(optimizer::IOptimizer& opt) override;
 
  private:
-	void update_derivative(const std::shared_ptr<Neuron>& from, double x);
+	void update_error(const std::shared_ptr<Neuron>& from, double x);
 
-	IActivationFunction* act_func_;
+	IActivationFunction* act_func_{ nullptr };
 
-	double value_;
+	double value_{};
 
-	double error_;
+	double error_{};
 
-	std::unordered_map<std::shared_ptr<Neuron>, std::pair<double, double>> in_;
+	std::unordered_map<std::shared_ptr<Neuron>, std::pair<double, double>> in_{};
 
-	std::unordered_map<std::shared_ptr<Neuron>, double> act_values_;
+	std::unordered_map<std::shared_ptr<Neuron>, double> act_values_{};
 
-	std::unordered_map<std::shared_ptr<Neuron>, double> error_values_;
+	std::unordered_map<std::shared_ptr<Neuron>, double> error_values_{};
 
-	std::vector<std::weak_ptr<Neuron>> out_;
+	std::vector<std::weak_ptr<Neuron>> out_{};
 };
 }
