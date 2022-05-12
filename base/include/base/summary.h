@@ -8,6 +8,12 @@
 
 namespace cppbp::base
 {
+class INamable
+{
+ public:
+	[[nodiscard]] virtual std::string name() const = 0;
+};
+
 class ISummary
 {
  public:

@@ -14,6 +14,13 @@ cppbp::layer::Neuron::Neuron(cppbp::layer::IActivationFunction& af)
 {
 }
 
+cppbp::layer::Neuron::Neuron(cppbp::layer::IActivationFunction& af, uint64_t parent_id, uint64_t id)
+	: Neuron(af)
+{
+	parent_id_ = parent_id;
+	id_ = id;
+}
+
 void cppbp::layer::Neuron::set(double val)
 {
 	value_ = val;
@@ -22,6 +29,11 @@ void cppbp::layer::Neuron::set(double val)
 void cppbp::layer::Neuron::set_derivative(double d)
 {
 	error_ = d;
+}
+
+double cppbp::layer::Neuron::get() const
+{
+	return (*act_func_)(value_);
 }
 
 void cppbp::layer::Neuron::operator()(const std::shared_ptr<Neuron>& from, double x)
@@ -39,7 +51,8 @@ void cppbp::layer::Neuron::update_error(const std::shared_ptr<Neuron>& from, dou
 
 void cppbp::layer::Neuron::connect(const std::shared_ptr<Neuron>& next)
 {
-	next->in_[this->shared_from_this()] = make_pair(utils::random::uniform(0.1, 1.0), utils::random::uniform(0.1, 1.0));
+	next->in_[this->shared_from_this()] =
+		make_pair(utils::random::uniform(0.1, 1.0), utils::random::uniform(0.1, 1.0));
 	this->out_.emplace_back(next);
 }
 
@@ -72,12 +85,22 @@ string cppbp::layer::Neuron::summary() const
 {
 	stringstream ss{};
 
-	ss << "Neuron []:" << "{\n";
+	ss << "Neuron " << name() << "[" << in_.size() << "]:{\n";
 	for (auto& [f, w] : in_)
 	{
-		ss << "[" << w.first << "," << w.second << "]\n";
+		ss << "[" << w.first << "," << w.second << "] from " << f->name() << "\n";
+	}
+	if (in_.empty())
+	{
+		ss << "<No incoming edge connected>\n";
 	}
 	ss << "}";
 	return ss.str();
 }
+
+string cppbp::layer::Neuron::name() const
+{
+	return "(" + to_string(parent_id_) + "," + to_string(id_) + ")";
+}
+
 

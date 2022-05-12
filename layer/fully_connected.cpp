@@ -11,9 +11,11 @@ using namespace std;
 cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivationFunction& af)
 	: act_func_(&af), next_(nullptr)
 {
+	id_ = this->objects_alive;
+
 	for (int i = 0; i < len; i++)
 	{
-		neurons_.emplace_back(std::make_shared<Neuron>(af));
+		neurons_.emplace_back(std::make_shared<Neuron>(af, id_, i));
 	}
 }
 
@@ -38,6 +40,11 @@ void cppbp::layer::FullyConnected::backprop()
 	{
 		n->backprop();
 	}
+
+	if (prev_)
+	{
+		prev_->backprop();
+	}
 }
 
 void cppbp::layer::FullyConnected::forward()
@@ -46,6 +53,11 @@ void cppbp::layer::FullyConnected::forward()
 	{
 		n->forward();
 	}
+
+	if (next_)
+	{
+		next_->forward();
+	}
 }
 
 void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
@@ -53,6 +65,11 @@ void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 	for (auto& n : neurons_)
 	{
 		n->optimize(opt);
+	}
+
+	if (next_)
+	{
+		next_->optimize(opt);
 	}
 }
 
@@ -88,3 +105,18 @@ std::string cppbp::layer::FullyConnected::summary() const
 
 	return ss.str();
 }
+std::vector<double> cppbp::layer::FullyConnected::get() const
+{
+	std::vector<double> vals{};
+	for (const auto& n : neurons_)
+	{
+		vals.emplace_back(n->get());
+	}
+	return vals;
+}
+
+string cppbp::layer::FullyConnected::name() const
+{
+	return "fc" + to_string(id_);
+}
+

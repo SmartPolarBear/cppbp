@@ -13,7 +13,8 @@ namespace cppbp::layer
 class ILayer
 	: public base::IForward,
 	  public base::IBackProp,
-	  public base::ISummary
+	  public base::ISummary,
+	  public base::INamable
 {
 };
 }

@@ -22,12 +22,17 @@ class Neuron
 	  public base::IForward,
 	  public base::IBackProp,
 	  public base::ISummary,
+	  public base::INamable,
 	  public optimizer::IOptimizable
 {
  public:
 	explicit Neuron(IActivationFunction& af);
 
+	Neuron(IActivationFunction& af, uint64_t parent_id, uint64_t id);
+
 	void set(double val);
+
+	double get() const;
 
 	void set_derivative(double d);
 
@@ -40,9 +45,19 @@ class Neuron
 	void backprop() override;
 
 	void optimize(optimizer::IOptimizer& opt) override;
+
 	std::string summary() const override;
 
+	std::string name() const override;
+
+
  private:
+	std::string name_{};
+
+	uint64_t parent_id_;
+
+	uint64_t id_;
+
 	void update_error(const std::shared_ptr<Neuron>& from, double x);
 
 	IActivationFunction* act_func_{ nullptr };
