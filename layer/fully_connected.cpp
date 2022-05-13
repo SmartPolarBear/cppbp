@@ -19,8 +19,10 @@ cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivati
 	}
 }
 
-cppbp::layer::FullyConnected& cppbp::layer::FullyConnected::connect(FullyConnected& next)
+cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& n)
 {
+	auto& next = dynamic_cast<FullyConnected&>(n); //FIXME
+
 	for (const auto& t : neurons_)
 	{
 		for (const auto& n : next.neurons_)
@@ -118,5 +120,20 @@ std::vector<double> cppbp::layer::FullyConnected::get() const
 string cppbp::layer::FullyConnected::name() const
 {
 	return "fc" + to_string(id_);
+}
+
+cppbp::layer::ILayer& cppbp::layer::FullyConnected::operator|(cppbp::layer::ILayer& next)
+{
+	return connect(next);
+}
+
+cppbp::layer::ILayer* cppbp::layer::FullyConnected::next()
+{
+	return next_;
+}
+
+cppbp::layer::ILayer* cppbp::layer::FullyConnected::prev()
+{
+	return prev_;
 }
 

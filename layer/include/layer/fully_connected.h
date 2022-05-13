@@ -20,13 +20,18 @@ class FullyConnected
 	  public utils::Counter<FullyConnected>
 {
  public:
+	ILayer* next() override;
+	ILayer* prev() override;
+ public:
 	explicit FullyConnected(size_t len, IActivationFunction& af);
 
-	FullyConnected& connect(FullyConnected& next);
+	ILayer& connect(ILayer& next) override;
 
-	void set(std::vector<double> values);
+	ILayer& operator|(ILayer& next) override;
 
-	std::vector<double> get() const;
+	void set(std::vector<double> values) override;
+
+	[[nodiscard]] std::vector<double> get() const override;
 
 	void set_derivatives(std::vector<double> d);
 
@@ -34,11 +39,11 @@ class FullyConnected
 
 	void forward() override;
 
-	void optimize(optimizer::IOptimizer& optimizable) override;
+	void optimize(optimizer::IOptimizer& opt) override;
 
-	std::string name() const override;
+	[[nodiscard]] std::string name() const override;
 
-	std::string summary() const override;
+	[[nodiscard]] std::string summary() const override;
  private:
 	uint64_t id_{};
 

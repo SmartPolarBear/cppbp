@@ -4,12 +4,14 @@
 
 #include <layer/fully_connected.h>
 #include <layer/sigmoid.h>
+#include <model/model.h>
 
 #include <iostream>
 #include <vector>
 
 using namespace cppbp;
 using namespace cppbp::layer;
+using namespace cppbp::model;
 
 using namespace std;
 
@@ -21,14 +23,13 @@ int main()
 	FullyConnected fc2{ 15, sigmoid };
 	FullyConnected fc3{ 4, sigmoid };
 
-	fc1.connect(fc2).connect(fc3);
+	Model model{ fc1.connect(fc2).connect(fc3) };
 
-	std::cout << fc1.summary() << endl;
+	std::cout << model.summary() << endl;
 
 	vector<double> input{ 0, 0, 0 };
-	fc1.set(input);
-	fc1.forward();
-	auto ret = fc3.get();
+
+	auto ret = model(input);
 
 	for (auto r : ret)
 	{

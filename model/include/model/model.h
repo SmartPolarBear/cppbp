@@ -19,12 +19,13 @@ class Model
 	  public optimizer::IOptimizable
 {
  public:
-	explicit Model(layer::ILayer& input);
+	explicit Model(layer::ILayer& layer);
 
-	explicit Model(std::vector<layer::ILayer> layers);
+	explicit Model(std::vector<layer::ILayer>& layers);
 
-	// TODO: in train mode, automatically do a backprop
 	std::vector<double> operator()(std::vector<double> input);
+
+	void set(std::vector<double> values);
 
 	void forward() override;
 
@@ -34,7 +35,14 @@ class Model
 
 	void eval();
 
- private:
+	std::string name() const override;
 
+	std::string summary() const override;
+
+	void optimize(optimizer::IOptimizer& iOptimizer) override;
+
+ private:
+	layer::ILayer* input_{}, * output_{};
+	std::string name_{ "Model" };
 };
 }
