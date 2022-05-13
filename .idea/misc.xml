@@ -6,6 +6,7 @@
       <file path="$PROJECT_DIR$/libs" />
     </libraryRoots>
     <excludeRoots>
+      <file path="$PROJECT_DIR$/libs/csv2" />
       <file path="$PROJECT_DIR$/libs/eigen" />
     </excludeRoots>
   </component>

@@ -6,6 +6,7 @@
 
 #include <layer/layer.h>
 #include <optimizer/optimizer.h>
+#include <optimizer/loss.h>
 
 #include <vector>
 
@@ -19,9 +20,9 @@ class Model
 	  public optimizer::IOptimizable
 {
  public:
-	explicit Model(layer::ILayer& layer);
+	explicit Model(layer::ILayer& layer, optimizer::ILossFunction& loss);
 
-	explicit Model(std::vector<layer::ILayer>& layers);
+	explicit Model(std::vector<layer::ILayer>& layers, optimizer::ILossFunction& loss);
 
 	std::vector<double> operator()(std::vector<double> input);
 
@@ -30,10 +31,6 @@ class Model
 	void forward() override;
 
 	void backprop() override;
-
-	void train();
-
-	void eval();
 
 	std::string name() const override;
 
@@ -44,5 +41,6 @@ class Model
  private:
 	layer::ILayer* input_{}, * output_{};
 	std::string name_{ "Model" };
+	optimizer::ILossFunction* loss_{};
 };
 }

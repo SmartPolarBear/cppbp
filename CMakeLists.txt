@@ -8,7 +8,8 @@ add_library(cppbp STATIC main.cpp)
 add_subdirectory(libs)
 
 target_link_libraries(cppbp
-        INTERFACE Eigen3::Eigen)
+        INTERFACE Eigen3::Eigen
+        INTERFACE csv2::csv2)
 
 
 add_subdirectory(base)

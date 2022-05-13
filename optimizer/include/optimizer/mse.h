@@ -20,5 +20,5 @@ class MSELoss
 		std::vector<double> label,
 		layer::IActivationFunction& f) override;
 
-}
+};
 }
