@@ -22,6 +22,7 @@ class IrisDataset
 
 	std::pair<std::vector<double>, std::vector<double>> get(size_t index) const override;
 	size_t size() const override;
+
  private:
 	static inline const std::unordered_map<std::string, double> LABEL_TO_DOUBLE{
 		{ "Iris-setosa", 0 },

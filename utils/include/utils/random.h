@@ -9,6 +9,7 @@ namespace cppbp::utils
 class random
 {
  public:
-	static double uniform(double l,double r);
+	static double uniform(double l, double r);
+	static int randint(int l, int r);
 };
 }
