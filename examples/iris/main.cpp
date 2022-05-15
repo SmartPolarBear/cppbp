@@ -29,7 +29,7 @@ int main()
 	Sigmoid sigmoid{};
 
 	FullyConnected fc1{ 4, sigmoid };
-	FullyConnected fc2{ 15, sigmoid };
+	FullyConnected fc2{ 6, sigmoid };
 	FullyConnected fc3{ 3, sigmoid };
 
 	MSELoss loss{};
@@ -38,10 +38,10 @@ int main()
 	std::cout << model.summary() << endl;
 
 	IrisDataset iris{ "data/iris.data" };
-	DataLoader dl{ iris, 32, true };
+	DataLoader dl{ iris, 16, true };
 
-	FixedStepOptimizer optimizer{ 0.01 };
-	model.fit(dl, 32, optimizer);
+	FixedStepOptimizer optimizer{ 0.5 };
+	model.fit(dl, 5, optimizer);
 
 	return 0;
 }

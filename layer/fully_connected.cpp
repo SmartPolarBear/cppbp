@@ -84,13 +84,14 @@ void cppbp::layer::FullyConnected::set(std::vector<double> values)
 	}
 }
 
-void cppbp::layer::FullyConnected::set_derivatives(std::vector<double> d)
+void cppbp::layer::FullyConnected::set_errors(std::vector<double> d)
 {
 	for (int i = 0; i < d.size(); i++)
 	{
-		neurons_[i]->set_derivative(d[i]);
+		neurons_[i]->set_error(d[i]);
 	}
 }
+
 std::string cppbp::layer::FullyConnected::summary() const
 {
 	stringstream ss{};
@@ -136,5 +137,10 @@ cppbp::layer::ILayer* cppbp::layer::FullyConnected::next()
 cppbp::layer::ILayer* cppbp::layer::FullyConnected::prev()
 {
 	return prev_;
+}
+
+cppbp::layer::IActivationFunction& cppbp::layer::FullyConnected::activation_function()
+{
+	return *act_func_;
 }
 

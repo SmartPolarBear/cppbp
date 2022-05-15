@@ -26,7 +26,7 @@ void cppbp::layer::Neuron::set(double val)
 	value_ = val;
 }
 
-void cppbp::layer::Neuron::set_derivative(double d)
+void cppbp::layer::Neuron::set_error(double d)
 {
 	error_ = d;
 }
@@ -75,10 +75,10 @@ void cppbp::layer::Neuron::backprop()
 
 void cppbp::layer::Neuron::optimize(cppbp::optimizer::IOptimizer& opt)
 {
-	for (auto& [f, v] : error_values_)
+	for (auto& [f, v] : act_values_)
 	{
-		in_[f].first -= opt.optimize(in_[f].first, v * act_values_[f]);
-		in_[f].second -= opt.optimize(in_[f].second, v);
+		in_[f].first -= opt.optimize(in_[f].first, error_ * v);
+		in_[f].second -= opt.optimize(in_[f].second, error_);
 	}
 }
 string cppbp::layer::Neuron::summary() const

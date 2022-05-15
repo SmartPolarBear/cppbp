@@ -65,14 +65,14 @@ std::string cppbp::model::Model::summary() const
 void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer& opt)
 {
 	opt.step();
-	// TODO
+	input_->next()->optimize(opt);
 }
 
 void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl, size_t epoches, cppbp::optimizer::IOptimizer& opt)
 {
 	for (size_t e = 0; e < epoches; e++)
 	{
-		std::cout << "Epoch: " << epoches << std::endl << "Train..." << std::endl;
+		std::cout << "Epoch: " << e << std::endl << "Train..." << std::endl;
 
 		auto batch = dl.batch();
 		for (size_t step = 0; auto& [data, label] : batch)
@@ -82,7 +82,19 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl, size_t epoches,
 			std::cout << "Step:" << step << " Loss:" << loss << " ";
 			//TODO
 			std::cout << std::endl;
+
+			std::vector<double> errors{};
+			for (int i = 0; i < predicts.size(); i++)
+			{
+				errors.push_back(
+					loss_->derive(predicts, label, i) * output_->activation_function().derive(predicts[i]));
+			}
+
+			output_->set_errors(errors);
+			this->backprop();
 			this->optimize(opt);
+
+			step++;
 		}
 
 		std::cout << "Eval..." << std::endl;
@@ -95,6 +107,8 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl, size_t epoches,
 
 			//TODO
 			std::cout << std::endl;
+
+			step++;
 		}
 
 	}

@@ -34,7 +34,7 @@ class Neuron
 
 	double get() const;
 
-	void set_derivative(double d);
+	void set_error(double d);
 
 	void operator()(const std::shared_ptr<Neuron>& from, double x);
 

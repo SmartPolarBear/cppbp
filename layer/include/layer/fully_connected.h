@@ -16,7 +16,6 @@ namespace cppbp::layer
 {
 class FullyConnected
 	: public ILayer,
-	  public optimizer::IOptimizable,
 	  public utils::Counter<FullyConnected>
 {
  public:
@@ -33,7 +32,7 @@ class FullyConnected
 
 	[[nodiscard]] std::vector<double> get() const override;
 
-	void set_derivatives(std::vector<double> d);
+	void set_errors(std::vector<double> d);
 
 	void backprop() override;
 
@@ -46,7 +45,9 @@ class FullyConnected
 	[[nodiscard]] std::string summary() const override;
  private:
 	uint64_t id_{};
-
+ public:
+	IActivationFunction& activation_function() override;
+ private:
 	IActivationFunction* act_func_{ nullptr };
 
 	std::vector<std::shared_ptr<Neuron>> neurons_{};
