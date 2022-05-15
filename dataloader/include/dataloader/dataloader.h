@@ -8,15 +8,17 @@
 
 #include <vector>
 #include <utility>
+#include <set>
 
 namespace cppbp::dataloader
 {
 class DataLoader
 {
  public:
-	explicit DataLoader(IDataset& ds, size_t batch_size, bool shuffle);
+	explicit DataLoader(IDataset& ds, size_t batch_size, bool shuffle, double test_ratio = 0.2);
 
 	std::vector<DataPair> batch();
+	std::vector<DataPair> test();
  private:
 	std::vector<DataPair> next_rand();
 
@@ -26,6 +28,8 @@ class DataLoader
 	size_t batch_size_{};
 	bool shuffle_{};
 
-	size_t next_{0};
+	size_t next_{ 0 };
+
+	std::set<size_t> test_;
 };
 }

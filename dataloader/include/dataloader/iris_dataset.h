@@ -24,6 +24,7 @@ class IrisDataset
 	size_t size() const override;
 
  private:
+
 	static inline const std::unordered_map<std::string, double> LABEL_TO_DOUBLE{
 		{ "Iris-setosa", 0 },
 		{ "Iris-versicolor", 1 },

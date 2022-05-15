@@ -13,7 +13,10 @@ using DataPair = std::pair<std::vector<double>, std::vector<double>>;
 class IDataset
 {
  public:
+	using DatasetPair = std::pair<IDataset, IDataset>;
+
 	virtual DataPair get(size_t index) const = 0;
 	virtual size_t size() const = 0;
+
 };
 }
