@@ -79,7 +79,8 @@ void cppbp::layer::FullyConnected::set(std::vector<double> values)
 {
 	for (int i = 0; i < values.size(); i++)
 	{
-		neurons_[i]->set(values[i]);
+		auto v = values.at(i);
+		neurons_[i]->set(v);
 	}
 }
 

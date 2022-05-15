@@ -27,7 +27,9 @@ cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
 				}
 				else
 				{
-					label.push_back(LABEL_TO_DOUBLE.at(value));
+					auto one_hot = LABEL_TO_ID.at(value);
+					label.resize(3);
+					label[one_hot] = 1;
 				}
 				col++;
 			}

@@ -25,7 +25,7 @@ class IrisDataset
 
  private:
 
-	static inline const std::unordered_map<std::string, double> LABEL_TO_DOUBLE{
+	static inline const std::unordered_map<std::string, int> LABEL_TO_ID{
 		{ "Iris-setosa", 0 },
 		{ "Iris-versicolor", 1 },
 		{ "Iris-virginica", 2 }

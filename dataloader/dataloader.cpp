@@ -35,7 +35,7 @@ std::vector<DataPair> cppbp::dataloader::DataLoader::next_rand()
 	std::set<int> samples;
 	while (samples.size() < batch_size_)
 	{
-		int b = utils::random::randint(0, ds_->size());
+		int b = utils::random::randint(0, ds_->size() - 1);
 		if (test_.contains(b))
 		{
 			continue;

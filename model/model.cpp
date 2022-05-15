@@ -5,6 +5,7 @@
 #include <model/model.h>
 
 #include <utility>
+#include <iostream>
 
 cppbp::model::Model::Model(layer::ILayer& layer, optimizer::ILossFunction& loss)
 	: input_(&layer), output_(&layer), loss_(&loss)
@@ -64,5 +65,37 @@ std::string cppbp::model::Model::summary() const
 void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer& opt)
 {
 	opt.step();
+	// TODO
+}
 
+void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl, size_t epoches, cppbp::optimizer::IOptimizer& opt)
+{
+	for (size_t e = 0; e < epoches; e++)
+	{
+		std::cout << "Epoch: " << epoches << std::endl << "Train..." << std::endl;
+
+		auto batch = dl.batch();
+		for (size_t step = 0; auto& [data, label] : batch)
+		{
+			auto predicts = (*this)(data);
+			auto loss = (*loss_)(predicts, label);
+			std::cout << "Step:" << step << " Loss:" << loss << " ";
+			//TODO
+			std::cout << std::endl;
+			this->optimize(opt);
+		}
+
+		std::cout << "Eval..." << std::endl;
+		batch = dl.batch();
+		for (size_t step = 0; auto& [data, label] : batch)
+		{
+			auto predicts = (*this)(data);
+			auto loss = (*loss_)(predicts, label);
+			std::cout << "Step:" << step << " Loss:" << loss << " ";
+
+			//TODO
+			std::cout << std::endl;
+		}
+
+	}
 }

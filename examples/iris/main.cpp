@@ -11,6 +11,7 @@
 #include <optimizer/mse.h>
 
 #include <dataloader/iris_dataset.h>
+#include <dataloader/dataloader.h>
 
 #include <iostream>
 #include <vector>
@@ -27,28 +28,20 @@ int main()
 {
 	Sigmoid sigmoid{};
 
-	FullyConnected fc1{ 3, sigmoid };
+	FullyConnected fc1{ 4, sigmoid };
 	FullyConnected fc2{ 15, sigmoid };
-	FullyConnected fc3{ 4, sigmoid };
+	FullyConnected fc3{ 3, sigmoid };
 
 	MSELoss loss{};
-
 	Model model{ fc1.connect(fc2).connect(fc3), loss };
 
 	std::cout << model.summary() << endl;
 
 	IrisDataset iris{ "data/iris.data" };
+	DataLoader dl{ iris, 32, true };
 
-	auto d = iris.get(15);
-
-	vector<double> input{ 0, 0, 0 };
-
-	auto ret = model(input);
-
-	for (auto r : ret)
-	{
-		cout << r << " ";
-	}
+	FixedStepOptimizer optimizer{ 0.01 };
+	model.fit(dl, 32, optimizer);
 
 	return 0;
 }

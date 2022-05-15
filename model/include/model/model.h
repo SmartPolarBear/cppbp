@@ -5,8 +5,11 @@
 #pragma once
 
 #include <layer/layer.h>
+
 #include <optimizer/optimizer.h>
 #include <optimizer/loss.h>
+
+#include <dataloader/dataloader.h>
 
 #include <vector>
 
@@ -32,7 +35,7 @@ class Model
 
 	void backprop() override;
 
-
+	void fit(cppbp::dataloader::DataLoader& dl, size_t epoches, cppbp::optimizer::IOptimizer& opt);
 
 	std::string name() const override;
 
