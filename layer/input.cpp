@@ -16,12 +16,16 @@ cppbp::layer::Input::Input(size_t size)
 
 void cppbp::layer::Input::backprop()
 {
-
+	// Do nothing
 }
 
 void cppbp::layer::Input::forward()
 {
-
+	if (next_)
+	{
+		next_->set(values_);
+		next_->forward();
+	}
 }
 
 cppbp::layer::ILayer* cppbp::layer::Input::next()
@@ -31,7 +35,7 @@ cppbp::layer::ILayer* cppbp::layer::Input::next()
 
 cppbp::layer::ILayer* cppbp::layer::Input::prev()
 {
-	return nullptr;
+	return nullptr; // It must be the leftmost layer
 }
 
 std::string cppbp::layer::Input::name() const
@@ -70,12 +74,12 @@ void cppbp::layer::Input::set(Eigen::VectorXd vec)
 
 void cppbp::layer::Input::set_deltas(Eigen::VectorXd deltas)
 {
-
+	// Do nothing
 }
 
 void cppbp::layer::Input::set_errors(Eigen::VectorXd errors)
 {
-
+	// Do nothing
 }
 
 Eigen::VectorXd cppbp::layer::Input::get() const
@@ -100,11 +104,12 @@ void cppbp::layer::Input::reshape(size_t input)
 
 void cppbp::layer::Input::optimize(cppbp::optimizer::IOptimizer& iOptimizer)
 {
-
+	// Do nothing
 }
 
 void cppbp::layer::Input::set_prev(cppbp::layer::ILayer* prev)
 {
+	// Do nothing
 }
 
 void cppbp::layer::Input::set_next(cppbp::layer::ILayer* next)

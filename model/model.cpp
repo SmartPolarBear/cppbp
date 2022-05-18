@@ -44,18 +44,18 @@ void cppbp::model::Model::set(std::vector<double> values)
 	input_->set(vec);
 }
 
-std::vector<double> cppbp::model::Model::operator()(std::vector<double> input)
+Eigen::VectorXd cppbp::model::Model::operator()(std::vector<double> input)
 {
 	set(std::move(input));
 	input_->forward();
+	return output_->get();
+}
 
-	auto output = output_->get();
-	std::vector<double> ret;
-	for (int i = 0; i < output.size(); i++)
-	{
-		ret.emplace_back(output[i]);
-	}
-	return ret;
+Eigen::VectorXd cppbp::model::Model::operator()(Eigen::VectorXd input)
+{
+	input_->set(std::move(input));
+	input_->forward();
+	return output_->get();
 }
 
 void cppbp::model::Model::forward()
@@ -85,56 +85,57 @@ void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer& opt)
 }
 
 void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
-	size_t epoches,
+	size_t epoch,
 	cppbp::optimizer::IOptimizer& opt,
-	bool varbose)
+	bool verbose)
 {
-//	for (size_t e = 0; e < epoches; e++)
-//	{
-//		if (varbose)
-//		{
-//			std::cout << "Epoch: " << e << std::endl << "Train..." << std::endl;
-//
-//		}
-//		auto batch = dl.train_batch();
-//		for (size_t step = 0; auto& [data, label] : batch)
-//		{
-//			auto predicts = (*this)(data);
-//			auto loss = (*loss_)(predicts, label);
-//			if (varbose)
-//			{
-//				std::cout << "Step:" << step << " Loss:" << loss << " ";
-//				//TODO
-//				std::cout << std::endl;
-//			}
-//
-//			std::vector<double> errors = loss_->error(predicts, label, output_->activation_function());
-//
-//			output_->set_deltas(errors);
-//			this->backprop();
-//			this->optimize(opt);
-//
-//			step++;
-//		}
-//
-//		if (varbose)
-//		{
-//			std::cout << "Eval..." << std::endl;
-//		}
-//		batch = dl.train_batch();
-//		for (size_t step = 0; auto& [data, label] : batch)
-//		{
-//			auto predicts = (*this)(data);
-//			auto loss = (*loss_)(predicts, label);
-//			if (varbose)
-//			{
-//				std::cout << "Step:" << step << " Loss:" << loss << " ";
-//
-//				//TODO
-//				std::cout << std::endl;
-//			}
-//			step++;
-//		}
-//
-//	}
+	for (size_t e = 0; e < epoch; e++)
+	{
+		if (verbose)
+		{
+			std::cout << "Epoch: " << e << std::endl << "Train..." << std::endl;
+
+		}
+		auto batch = dl.train_batch();
+		for (size_t step = 0; auto& [data, label] : batch)
+		{
+			auto predicts = (*this)(data);
+			auto loss = (*loss_)(predicts, label);
+
+			if (verbose)
+			{
+				std::cout << "Step:" << step << " Loss:" << loss << " ";
+				//TODO
+				std::cout << std::endl;
+			}
+
+			auto errors = loss_->derive(predicts, label);
+
+			output_->set_errors(errors);
+			this->backprop();
+			this->optimize(opt);
+
+			step++;
+		}
+
+		if (verbose)
+		{
+			std::cout << "Eval..." << std::endl;
+		}
+		batch = dl.train_batch();
+		for (size_t step = 0; auto& [data, label] : batch)
+		{
+			auto predicts = (*this)(data);
+			auto loss = (*loss_)(predicts, label);
+			if (verbose)
+			{
+				std::cout << "Step:" << step << " Loss:" << loss << " ";
+
+				//TODO
+				std::cout << std::endl;
+			}
+			step++;
+		}
+
+	}
 }

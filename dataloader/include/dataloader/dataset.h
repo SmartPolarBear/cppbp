@@ -6,9 +6,11 @@
 #include <vector>
 #include <utility>
 
+#include <Eigen/Eigen>
+
 namespace cppbp::dataloader
 {
-using DataPair = std::pair<std::vector<double>, std::vector<double>>;
+using DataPair = std::pair<Eigen::VectorXd, Eigen::VectorXd>;
 
 class IDataset
 {

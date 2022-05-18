@@ -24,18 +24,18 @@ using namespace cppbp::dataloader;
 
 using namespace std;
 
-int argmax(const std::vector<double>& vals)
-{
-	int ret = 0;
-	for (int i = 1; i < vals.size(); i++)
-	{
-		if (vals[i] > vals[ret])
-		{
-			ret = i;
-		}
-	}
-	return ret;
-}
+//int argmax(const std::vector<double>& vals)
+//{
+//	int ret = 0;
+//	for (int i = 1; i < vals.size(); i++)
+//	{
+//		if (vals[i] > vals[ret])
+//		{
+//			ret = i;
+//		}
+//	}
+//	return ret;
+//}
 
 int main()
 {
@@ -51,25 +51,18 @@ int main()
 
 	std::cout << model.summary() << endl;
 
-	vector<double> input{ 0, 1, 2, 3 };
-	auto val = model(input);
-	for (auto o : val)
-	{
-		cout << o << " ";
-	}
+	IrisDataset iris{ "data/iris.data" };
+	DataLoader dl{ iris, 16, true };
 
-//	IrisDataset iris{ "data/iris.data" };
-//	DataLoader dl{ iris, 16, true };
-//
-//	FixedStepOptimizer optimizer{ 0.2 };
-//	model.fit(dl, 100, optimizer, true);
-//
-//	for (int i = 0; i < iris.size(); i++)
-//	{
-//		auto [data, label] = iris.get(i);
-//		auto ret = model(data);
-//		cout << argmax(label) << "," << argmax(ret) << endl;
-//	}
+	FixedStepOptimizer optimizer{ 0.2 };
+	model.fit(dl, 100, optimizer, true);
+
+	for (int i = 0; i < iris.size(); i++)
+	{
+		auto [data, label] = iris.get(i);
+		auto ret = model(data);
+		cout << label.transpose() << ", " << ret.transpose() << endl;
+	}
 
 	return 0;
 }

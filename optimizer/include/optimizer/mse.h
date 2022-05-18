@@ -12,13 +12,9 @@ class MSELoss
 	: public ILossFunction
 {
  public:
-	double operator()(std::vector<double> value, std::vector<double> label) override;
-	double eval(std::vector<double> value, std::vector<double> label) override;
-	double derive(std::vector<double> value, std::vector<double> label, uint64_t idx) override;
-
-	std::vector<double> error(std::vector<double> value,
-		std::vector<double> label,
-		layer::IActivationFunction& f) override;
+	double operator()(Eigen::VectorXd value, Eigen::VectorXd label) override;
+	double eval(Eigen::VectorXd value, Eigen::VectorXd label) override;
+	Eigen::VectorXd derive(Eigen::VectorXd value, Eigen::VectorXd label) override;
 
 };
 }

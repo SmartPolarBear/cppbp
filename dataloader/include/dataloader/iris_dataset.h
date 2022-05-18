@@ -20,7 +20,7 @@ class IrisDataset
  public:
 	explicit IrisDataset(std::string pathname);
 
-	std::pair<std::vector<double>, std::vector<double>> get(size_t index) const override;
+	DataPair get(size_t index) const override;
 	size_t size() const override;
 
  private:
@@ -32,7 +32,7 @@ class IrisDataset
 	};
 
 	std::string path_{};
-	std::vector<std::pair<std::vector<double>, std::vector<double>>> data_{};
+	std::vector<DataPair> data_{};
 };
 
 }

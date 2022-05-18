@@ -4,38 +4,25 @@
 
 #include <optimizer/mse.h>
 
-double cppbp::optimizer::MSELoss::eval(std::vector<double> value, std::vector<double> label)
-{
-	double ssum = 0.0;
-	for (int i = 0; i < value.size(); i++)
-	{
-		ssum += (value[i] - label[i]) * (value[i] - label[i]);
-	}
+#include <iostream>
 
-	return 0.5 * ssum / value.size();
+double cppbp::optimizer::MSELoss::eval(Eigen::VectorXd value, Eigen::VectorXd label)
+{
+	auto diff = value - label;
+
+	double ret = 0.5 * (diff.dot(diff)) / value.size();
+	return ret;
 }
 
-double cppbp::optimizer::MSELoss::operator()(std::vector<double> value, std::vector<double> label)
+double cppbp::optimizer::MSELoss::operator()(Eigen::VectorXd value, Eigen::VectorXd label)
 {
 	return eval(value, label);
 }
 
-double cppbp::optimizer::MSELoss::derive(std::vector<double> value, std::vector<double> label, uint64_t idx)
+Eigen::VectorXd cppbp::optimizer::MSELoss::derive(Eigen::VectorXd value, Eigen::VectorXd label)
 {
-	return label[idx] - value[idx];
+	return label - value;
 }
 
-std::vector<double> cppbp::optimizer::MSELoss::error(
-	std::vector<double> value,
-	std::vector<double> label,
-	layer::IActivationFunction& f)
-{
-	std::vector<double> errors{};
-	for (int i = 0; i < value.size(); i++)
-	{
-		errors.emplace_back(derive(value, label, i) * f.derive(value[i]));
-	}
-	return errors;
-}
 
 

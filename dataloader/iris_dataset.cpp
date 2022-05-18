@@ -5,6 +5,12 @@
 
 #include <algorithm>
 
+using namespace cppbp::dataloader;
+
+using namespace std;
+
+using namespace Eigen;
+
 cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
 	: path_(std::move(pathname))
 {
@@ -16,8 +22,8 @@ cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
 	{
 		for (const auto& row : csv)
 		{
-			std::vector<double> params{};
-			std::vector<double> label{};
+			VectorXd params = VectorXd::Zero(4);
+			VectorXd label = VectorXd::Zero(3);
 
 			for (int col = 0; auto cell : row)
 			{
@@ -25,14 +31,14 @@ cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
 				cell.read_value(value);
 				if (col < 4)
 				{
-					params.push_back(std::stod(value));
+					params[col] = std::stod(value);
 				}
 				else
 				{
 					auto one_hot = LABEL_TO_ID.at(value);
-					label.resize(3);
 					label[one_hot] = 1;
 				}
+
 				col++;
 			}
 
@@ -41,7 +47,7 @@ cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
 	}
 }
 
-std::pair<std::vector<double>, std::vector<double>> cppbp::dataloader::IrisDataset::get(size_t index) const
+DataPair cppbp::dataloader::IrisDataset::get(size_t index) const
 {
 	return data_.at(index);
 }

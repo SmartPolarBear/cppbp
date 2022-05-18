@@ -28,27 +28,34 @@ cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& next)
 
 void cppbp::layer::FullyConnected::backprop()
 {
-	VectorXd prev_activation;
+	VectorXd prev_activation(1 + prev()->get().size());
+	prev_activation << 1, prev()->get();
 
-	prev_activation << 1, prev_->get(); // TODO: add a separate input layer class
+	deltas_ = errors_.cwiseProduct(act_func_->derive(activations_));
 
-	prev_->set_deltas(errors_.cwiseProduct(act_func_->derive(activations_)));
+	VectorXd errors = deltas_.transpose() * weights_.block(0, 1, weights_.rows(), weights_.cols() - 1);
+	prev()->set_errors(errors);
+
+	if (prev())
+	{
+		prev()->backprop();
+	}
 }
 
 void cppbp::layer::FullyConnected::forward()
 {
-	if (next_)
+	if (next())
 	{
-		next_->set(activations_);
-		next_->forward();
+		next()->set(activations_);
+		next()->forward();
 	}
 }
 
 void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 {
-	VectorXd aug;
-	aug << 1, activations_;
-	weights_ += 0.1 * deltas_.transpose() * aug;// TODO: use optimizer
+	VectorXd aug{ 1 + prev()->get().size() };
+	aug << 1, prev()->get();
+	weights_ += 0.1 * deltas_ * aug.transpose();// TODO: use optimizer
 
 	if (next_)
 	{
@@ -59,7 +66,7 @@ void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 void cppbp::layer::FullyConnected::set(VectorXd vec)
 {
 	input_ = vec;
-	VectorXd aug;
+	VectorXd aug(vec.size() + 1);
 	aug << 1, vec;
 	activations_ = act_func_->eval(weights_ * aug);
 }
@@ -67,7 +74,6 @@ void cppbp::layer::FullyConnected::set(VectorXd vec)
 void cppbp::layer::FullyConnected::set_deltas(Eigen::VectorXd dlts)
 {
 	deltas_ = dlts;
-	errors_ = deltas_ * weights_.block(0, 1, weights_.rows(), weights_.cols() - 1);
 }
 
 std::string cppbp::layer::FullyConnected::summary() const

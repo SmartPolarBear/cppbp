@@ -27,26 +27,27 @@ class Model
 
 	explicit Model(std::vector<layer::ILayer>& layers, optimizer::ILossFunction& loss);
 
-	std::vector<double> operator()(std::vector<double> input);
+	Eigen::VectorXd operator()(std::vector<double> input);
+	Eigen::VectorXd operator()(Eigen::VectorXd input);
 
+	void fit(cppbp::dataloader::DataLoader& dl,
+		size_t epoch,
+		cppbp::optimizer::IOptimizer& opt,
+		bool verbose);
+
+	[[nodiscard]] std::string name() const override;
+
+	[[nodiscard]] std::string summary() const override;
+
+	void optimize(optimizer::IOptimizer& iOptimizer) override;
+
+ private:
 	void set(std::vector<double> values);
 
 	void forward() override;
 
 	void backprop() override;
 
-	void fit(cppbp::dataloader::DataLoader& dl,
-		size_t epoches,
-		cppbp::optimizer::IOptimizer& opt,
-		bool varbose);
-
-	std::string name() const override;
-
-	std::string summary() const override;
-
-	void optimize(optimizer::IOptimizer& iOptimizer) override;
-
- private:
 	layer::ILayer* input_{}, * output_{};
 	std::string name_{ "Model" };
 	optimizer::ILossFunction* loss_{};
