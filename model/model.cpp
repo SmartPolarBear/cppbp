@@ -68,27 +68,31 @@ void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer& opt)
 	input_->next()->optimize(opt);
 }
 
-void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl, size_t epoches, cppbp::optimizer::IOptimizer& opt)
+void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
+	size_t epoches,
+	cppbp::optimizer::IOptimizer& opt,
+	bool varbose)
 {
 	for (size_t e = 0; e < epoches; e++)
 	{
-		std::cout << "Epoch: " << e << std::endl << "Train..." << std::endl;
+		if (varbose)
+		{
+			std::cout << "Epoch: " << e << std::endl << "Train..." << std::endl;
 
-		auto batch = dl.batch();
+		}
+		auto batch = dl.train_batch();
 		for (size_t step = 0; auto& [data, label] : batch)
 		{
 			auto predicts = (*this)(data);
 			auto loss = (*loss_)(predicts, label);
-			std::cout << "Step:" << step << " Loss:" << loss << " ";
-			//TODO
-			std::cout << std::endl;
-
-			std::vector<double> errors{};
-			for (int i = 0; i < predicts.size(); i++)
+			if (varbose)
 			{
-				errors.push_back(
-					loss_->derive(predicts, label, i) * output_->activation_function().derive(predicts[i]));
+				std::cout << "Step:" << step << " Loss:" << loss << " ";
+				//TODO
+				std::cout << std::endl;
 			}
+
+			std::vector<double> errors = loss_->error(predicts, label, output_->activation_function());
 
 			output_->set_errors(errors);
 			this->backprop();
@@ -97,17 +101,22 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl, size_t epoches,
 			step++;
 		}
 
-		std::cout << "Eval..." << std::endl;
-		batch = dl.batch();
+		if (varbose)
+		{
+			std::cout << "Eval..." << std::endl;
+		}
+		batch = dl.train_batch();
 		for (size_t step = 0; auto& [data, label] : batch)
 		{
 			auto predicts = (*this)(data);
 			auto loss = (*loss_)(predicts, label);
-			std::cout << "Step:" << step << " Loss:" << loss << " ";
+			if (varbose)
+			{
+				std::cout << "Step:" << step << " Loss:" << loss << " ";
 
-			//TODO
-			std::cout << std::endl;
-
+				//TODO
+				std::cout << std::endl;
+			}
 			step++;
 		}
 

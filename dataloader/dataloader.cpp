@@ -21,7 +21,7 @@ cppbp::dataloader::DataLoader::DataLoader(cppbp::dataloader::IDataset& ds,
 	}
 }
 
-std::vector<DataPair> cppbp::dataloader::DataLoader::batch()
+std::vector<DataPair> cppbp::dataloader::DataLoader::train_batch()
 {
 	if (shuffle_)
 	{
@@ -53,7 +53,7 @@ std::vector<DataPair> cppbp::dataloader::DataLoader::next_rand()
 	return ret;
 }
 
-std::vector<DataPair> DataLoader::test()
+std::vector<DataPair> DataLoader::eval_batch()
 {
 	std::vector<DataPair> ret{};
 	for (auto i : test_)

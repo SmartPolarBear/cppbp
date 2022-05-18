@@ -12,7 +12,7 @@ double cppbp::layer::Sigmoid::eval(double x)
 	return 1 / (1 + std::exp(-x));
 }
 
-double cppbp::layer::Sigmoid::derive(double x)
+double cppbp::layer::Sigmoid::derive(double y)
 {
-	return eval(x) * (1 - eval(x));
+	return y * (1 - y);
 }

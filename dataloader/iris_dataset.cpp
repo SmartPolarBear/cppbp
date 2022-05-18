@@ -3,6 +3,8 @@
 //
 #include <dataloader/iris_dataset.h>
 
+#include <algorithm>
+
 cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
 	: path_(std::move(pathname))
 {

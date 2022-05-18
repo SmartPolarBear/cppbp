@@ -35,7 +35,10 @@ class Model
 
 	void backprop() override;
 
-	void fit(cppbp::dataloader::DataLoader& dl, size_t epoches, cppbp::optimizer::IOptimizer& opt);
+	void fit(cppbp::dataloader::DataLoader& dl,
+		size_t epoches,
+		cppbp::optimizer::IOptimizer& opt,
+		bool varbose);
 
 	std::string name() const override;
 

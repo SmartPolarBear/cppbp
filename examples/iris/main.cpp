@@ -24,12 +24,25 @@ using namespace cppbp::dataloader;
 
 using namespace std;
 
+int argmax(const std::vector<double>& vals)
+{
+	int ret = 0;
+	for (int i = 1; i < vals.size(); i++)
+	{
+		if (vals[i] > vals[ret])
+		{
+			ret = i;
+		}
+	}
+	return ret;
+}
+
 int main()
 {
 	Sigmoid sigmoid{};
 
 	FullyConnected fc1{ 4, sigmoid };
-	FullyConnected fc2{ 6, sigmoid };
+	FullyConnected fc2{ 8, sigmoid };
 	FullyConnected fc3{ 3, sigmoid };
 
 	MSELoss loss{};
@@ -40,8 +53,15 @@ int main()
 	IrisDataset iris{ "data/iris.data" };
 	DataLoader dl{ iris, 16, true };
 
-	FixedStepOptimizer optimizer{ 0.5 };
-	model.fit(dl, 5, optimizer);
+	FixedStepOptimizer optimizer{ 0.2 };
+	model.fit(dl, 100, optimizer, true);
+
+	for (int i = 0; i < iris.size(); i++)
+	{
+		auto [data, label] = iris.get(i);
+		auto ret = model(data);
+		cout << argmax(label) << "," << argmax(ret) << endl;
+	}
 
 	return 0;
 }

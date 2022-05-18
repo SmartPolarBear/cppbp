@@ -17,8 +17,8 @@ class DataLoader
  public:
 	explicit DataLoader(IDataset& ds, size_t batch_size, bool shuffle, double test_ratio = 0.2);
 
-	std::vector<DataPair> batch();
-	std::vector<DataPair> test();
+	std::vector<DataPair> train_batch();
+	std::vector<DataPair> eval_batch();
  private:
 	std::vector<DataPair> next_rand();
 

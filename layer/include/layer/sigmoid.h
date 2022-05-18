@@ -13,6 +13,6 @@ class Sigmoid final
  public:
 	double operator()(double x) override;
 	double eval(double x) override;
-	double derive(double x) override;
+	double derive(double y) override;
 };
 }

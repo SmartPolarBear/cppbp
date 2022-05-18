@@ -11,6 +11,6 @@ class IActivationFunction
 	virtual double operator()(double x) = 0;
 
 	virtual double eval(double x) = 0;
-	virtual double derive(double x) = 0;
+	virtual double derive(double y) = 0;
 };
 }

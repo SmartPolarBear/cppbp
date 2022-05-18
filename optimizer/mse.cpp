@@ -33,7 +33,7 @@ std::vector<double> cppbp::optimizer::MSELoss::error(
 	std::vector<double> errors{};
 	for (int i = 0; i < value.size(); i++)
 	{
-		errors.emplace_back(-derive(value, label, i) * value[i] * f.derive(value[i]));
+		errors.emplace_back(derive(value, label, i) * f.derive(value[i]));
 	}
 	return errors;
 }

@@ -50,7 +50,6 @@ class Neuron
 
 	std::string name() const override;
 
-
  private:
 	std::string name_{};
 
@@ -66,7 +65,9 @@ class Neuron
 
 	double error_{};
 
-	std::unordered_map<std::shared_ptr<Neuron>, std::pair<double, double>> in_{};
+	double bias_{};
+
+	std::unordered_map<std::shared_ptr<Neuron>, double> in_{};
 
 	std::unordered_map<std::shared_ptr<Neuron>, double> act_values_{};
 
