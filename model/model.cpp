@@ -122,7 +122,7 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
 		{
 			std::cout << "Eval..." << std::endl;
 		}
-		batch = dl.train_batch();
+		batch = dl.eval_batch();
 		for (size_t step = 0; auto& [data, label] : batch)
 		{
 			auto predicts = (*this)(data);
@@ -130,7 +130,6 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
 			if (verbose)
 			{
 				std::cout << "Step:" << step << " Loss:" << loss << " ";
-
 				//TODO
 				std::cout << std::endl;
 			}
