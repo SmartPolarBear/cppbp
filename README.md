@@ -12,10 +12,10 @@ A lightweight extensible library for constructing BP neural network in modern C+
 #### Environment
 This project is built with
 
-- MSVC 17.2.0 and above.
+- MSVC 17.0 and above.
 - CMAKE, 3.20 and above.
 
-**Note: Any compiler which supports C++20 may be compatible**
+**Note: Any compiler which supports C++20 may be compatible. **
 
 #### Third-party Libraries
 - [p-ranav/csv2](https://github.com/p-ranav/csv2)
@@ -23,6 +23,30 @@ This project is built with
 - [google/googletest](https://github.com/google/googletest)
 
 ## Usage
+
+1. Clone the project ***with submodules***.
+
+```shell
+git clone --recursive https://github.com/SmartPolarBear/cppbp.git
+```
+
+**Note that `--recursive` option is required, to clone submodules with the project source tree.** If you forget it, you may try:
+
+```shell
+git submodule update --init --recursive
+```
+
+2. Build Targets
+
+An IDE like CLion is recommended. If you want to build with bare CMake, you can do: 
+
+```shell
+mkdir build
+cmake ../
+cmake --build . --target <some target>
+```
+
+Target `cppbp` is the library, and `iris_bp` is an example on iris dataset classification.
 
 ### Link cppbp Library
 
