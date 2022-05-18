@@ -50,18 +50,25 @@ int main()
 
 	std::cout << model.summary() << endl;
 
-	IrisDataset iris{ "data/iris.data" };
-	DataLoader dl{ iris, 16, true };
-
-	FixedStepOptimizer optimizer{ 0.2 };
-	model.fit(dl, 100, optimizer, true);
-
-	for (int i = 0; i < iris.size(); i++)
+	vector<double> input{ 0, 1, 2, 3 };
+	auto out = model(input);
+	for (auto o : out)
 	{
-		auto [data, label] = iris.get(i);
-		auto ret = model(data);
-		cout << argmax(label) << "," << argmax(ret) << endl;
+		cout << o << " ";
 	}
+
+//	IrisDataset iris{ "data/iris.data" };
+//	DataLoader dl{ iris, 16, true };
+//
+//	FixedStepOptimizer optimizer{ 0.2 };
+//	model.fit(dl, 100, optimizer, true);
+//
+//	for (int i = 0; i < iris.size(); i++)
+//	{
+//		auto [data, label] = iris.get(i);
+//		auto ret = model(data);
+//		cout << argmax(label) << "," << argmax(ret) << endl;
+//	}
 
 	return 0;
 }

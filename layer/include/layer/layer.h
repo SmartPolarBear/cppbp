@@ -13,6 +13,8 @@
 
 #include <layer/activation_function.h>
 
+#include <Eigen/Eigen>
+
 #include <memory>
 #include <vector>
 
@@ -29,14 +31,16 @@ class ILayer
  public:
 	virtual ILayer& connect(ILayer& next) = 0;
 
-	virtual void set(std::vector<double> values) = 0;
+	virtual void set(Eigen::VectorXd vec) = 0;
 
-	virtual void set_errors(std::vector<double> d) = 0;
+	virtual void set_errors(Eigen::VectorXd error) = 0;
 
 	virtual std::vector<double> get() const = 0;
 
 	virtual IActivationFunction& activation_function() = 0;
 
 	virtual ILayer& operator|(ILayer& next) = 0;
+
+	virtual void reshape(size_t input) = 0;
 };
 }

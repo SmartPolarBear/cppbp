@@ -12,6 +12,8 @@
 
 #include <optimizer/optimizer.h>
 
+#include <Eigen/Eigen>
+
 #include <unordered_map>
 #include <memory>
 
@@ -19,8 +21,6 @@ namespace cppbp::layer
 {
 class Neuron
 	: public std::enable_shared_from_this<Neuron>,
-	  public base::IForward,
-	  public base::IBackProp,
 	  public base::ISummary,
 	  public base::INamable,
 	  public optimizer::IOptimizable
@@ -30,19 +30,10 @@ class Neuron
 
 	Neuron(IActivationFunction& af, uint64_t parent_id, uint64_t id);
 
-	void set(double val);
+	double operator()(Eigen::VectorXd input);
 
-	double get() const;
 
-	void set_error(double d);
-
-	void operator()(const std::shared_ptr<Neuron>& from, double x);
-
-	void connect(const std::shared_ptr<Neuron>& next);
-
-	void forward() override;
-
-	void backprop() override;
+	void reshape(size_t input);
 
 	void optimize(optimizer::IOptimizer& opt) override;
 
@@ -57,22 +48,17 @@ class Neuron
 
 	uint64_t id_;
 
-	void update_error(const std::shared_ptr<Neuron>& from, double x);
-
 	IActivationFunction* act_func_{ nullptr };
-
-	double value_{};
-
-	double error_{};
 
 	double bias_{};
 
-	std::unordered_map<std::shared_ptr<Neuron>, double> in_{};
+	double error_{};
 
-	std::unordered_map<std::shared_ptr<Neuron>, double> act_values_{};
+	double activation_{};
 
-	std::unordered_map<std::shared_ptr<Neuron>, double> error_values_{};
+	Eigen::VectorXd weights_;
 
-	std::vector<std::weak_ptr<Neuron>> out_{};
+	Eigen::VectorXd input_;
+
 };
 }

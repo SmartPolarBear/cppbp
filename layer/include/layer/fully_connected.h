@@ -24,15 +24,17 @@ class FullyConnected
  public:
 	explicit FullyConnected(size_t len, IActivationFunction& af);
 
+	void reshape(size_t input) override;
+
 	ILayer& connect(ILayer& next) override;
 
 	ILayer& operator|(ILayer& next) override;
 
-	void set(std::vector<double> values) override;
+	void set(Eigen::VectorXd vec) override ;
 
 	[[nodiscard]] std::vector<double> get() const override;
 
-	void set_errors(std::vector<double> d);
+	void set_errors(Eigen::VectorXd error) override;
 
 	void backprop() override;
 
@@ -43,14 +45,19 @@ class FullyConnected
 	[[nodiscard]] std::string name() const override;
 
 	[[nodiscard]] std::string summary() const override;
+
+	IActivationFunction& activation_function() override;
+
  private:
 	uint64_t id_{};
- public:
-	IActivationFunction& activation_function() override;
- private:
+
 	IActivationFunction* act_func_{ nullptr };
 
 	std::vector<std::shared_ptr<Neuron>> neurons_{};
+
+	Eigen::VectorXd activations_;
+
+	size_t len_{};
 
 	FullyConnected* next_{};
 	FullyConnected* prev_{};

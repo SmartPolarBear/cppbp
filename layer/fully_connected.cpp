@@ -8,14 +8,17 @@
 
 using namespace std;
 
+using namespace Eigen;
+
 cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivationFunction& af)
-	: act_func_(&af), next_(nullptr)
+	: act_func_(&af), len_(len), next_(nullptr)
 {
 	id_ = cppbp::layer::FullyConnected::objects_alive;
 
 	for (int i = 0; i < len; i++)
 	{
 		neurons_.emplace_back(std::make_shared<Neuron>(af, id_, i));
+		neurons_.back()->reshape(len);
 	}
 }
 
@@ -23,13 +26,8 @@ cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& n)
 {
 	auto& next = dynamic_cast<FullyConnected&>(n); //FIXME
 
-	for (const auto& t : neurons_)
-	{
-		for (const auto& n : next.neurons_)
-		{
-			t->connect(n);
-		}
-	}
+	next.reshape(len_);
+
 	next_ = &next;
 	next.prev_ = this;
 
@@ -38,26 +36,22 @@ cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& n)
 
 void cppbp::layer::FullyConnected::backprop()
 {
-	for (auto& n : neurons_)
-	{
-		n->backprop();
-	}
-
-	if (prev_)
-	{
-		prev_->backprop();
-	}
+//	for (auto& n : neurons_)
+//	{
+//		n->backprop();
+//	}
+//
+//	if (prev_)
+//	{
+//		prev_->backprop();
+//	}
 }
 
 void cppbp::layer::FullyConnected::forward()
 {
-	for (auto& n : neurons_)
-	{
-		n->forward();
-	}
-
 	if (next_)
 	{
+		next_->set(activations_);
 		next_->forward();
 	}
 }
@@ -75,21 +69,21 @@ void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 	}
 }
 
-void cppbp::layer::FullyConnected::set(std::vector<double> values)
+void cppbp::layer::FullyConnected::set(VectorXd vec)
 {
-	for (int i = 0; i < values.size(); i++)
+	activations_ = VectorXd(len_);
+	for (int i = 0; i < len_; i++)
 	{
-		auto v = values.at(i);
-		neurons_[i]->set(v);
+		activations_[i] = (*neurons_[i])(vec);
 	}
 }
 
-void cppbp::layer::FullyConnected::set_errors(std::vector<double> d)
+void cppbp::layer::FullyConnected::set_errors(Eigen::VectorXd error)
 {
-	for (int i = 0; i < d.size(); i++)
-	{
-		neurons_[i]->set_error(d[i]);
-	}
+//	for (int i = 0; i < error.size(); i++)
+//	{
+//		neurons_[i]->set_error(d[i]);
+//	}
 }
 
 std::string cppbp::layer::FullyConnected::summary() const
@@ -109,12 +103,13 @@ std::string cppbp::layer::FullyConnected::summary() const
 
 	return ss.str();
 }
+
 std::vector<double> cppbp::layer::FullyConnected::get() const
 {
 	std::vector<double> vals{};
-	for (const auto& n : neurons_)
+	for (int i = 0; i < len_; i++)
 	{
-		vals.emplace_back(n->get());
+		vals.emplace_back(activations_[i]);
 	}
 	return vals;
 }
@@ -142,5 +137,13 @@ cppbp::layer::ILayer* cppbp::layer::FullyConnected::prev()
 cppbp::layer::IActivationFunction& cppbp::layer::FullyConnected::activation_function()
 {
 	return *act_func_;
+}
+
+void cppbp::layer::FullyConnected::reshape(size_t input)
+{
+	for (auto& n : neurons_)
+	{
+		n->reshape(input);
+	}
 }
 
