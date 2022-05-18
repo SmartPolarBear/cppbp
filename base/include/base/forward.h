@@ -7,6 +7,7 @@
 
 namespace cppbp::base
 {
+/// An interface for forward propagation
 class IForward
 {
  public:

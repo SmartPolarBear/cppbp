@@ -28,7 +28,9 @@ class FullyConnected
 	explicit FullyConnected(size_t len, IActivationFunction& af);
 
 	void reshape(size_t input) override;
+
 	void set_prev(ILayer* prev) override;
+
 	void set_next(ILayer* next) override;
 
 	ILayer& connect(ILayer& next) override;

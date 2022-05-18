@@ -6,6 +6,7 @@
 
 namespace cppbp::base
 {
+/// An interface for back propagation
 class IBackProp
 {
  public:

@@ -6,6 +6,7 @@
 
 namespace cppbp::base
 {
+/// Simple doubly-linked list
 template<typename T>
 class ILinked
 {
