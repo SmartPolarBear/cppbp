@@ -14,12 +14,6 @@ cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivati
 	: act_func_(&af), len_(len), next_(nullptr)
 {
 	id_ = cppbp::layer::FullyConnected::objects_alive;
-
-	for (int i = 0; i < len; i++)
-	{
-		neurons_.emplace_back(std::make_shared<Neuron>(af, id_, i));
-		neurons_.back()->reshape(len);
-	}
 }
 
 cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& n)
@@ -36,15 +30,11 @@ cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& n)
 
 void cppbp::layer::FullyConnected::backprop()
 {
-//	for (auto& n : neurons_)
-//	{
-//		n->backprop();
-//	}
-//
-//	if (prev_)
-//	{
-//		prev_->backprop();
-//	}
+	VectorXd prev_activation;
+
+	prev_activation << 1, prev_->activations_; // TODO: add a separate input layer class
+
+	prev_->set_deltas(errors_.cwiseProduct(act_func_->derive(activations_)));
 }
 
 void cppbp::layer::FullyConnected::forward()
@@ -58,10 +48,9 @@ void cppbp::layer::FullyConnected::forward()
 
 void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 {
-	for (auto& n : neurons_)
-	{
-		n->optimize(opt);
-	}
+	VectorXd aug;
+	aug << 1, activations_;
+	weights_ += 0.1 * deltas_.transpose() * aug;// TODO: use optimizer
 
 	if (next_)
 	{
@@ -71,30 +60,28 @@ void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 
 void cppbp::layer::FullyConnected::set(VectorXd vec)
 {
-	activations_ = VectorXd(len_);
-	for (int i = 0; i < len_; i++)
-	{
-		activations_[i] = (*neurons_[i])(vec);
-	}
+	input_ = vec;
+	VectorXd aug;
+	aug << 1, vec;
+	activations_ = act_func_->eval(weights_ * aug);
 }
 
-void cppbp::layer::FullyConnected::set_errors(Eigen::VectorXd error)
+void cppbp::layer::FullyConnected::set_deltas(Eigen::VectorXd dlts)
 {
-//	for (int i = 0; i < error.size(); i++)
-//	{
-//		neurons_[i]->set_error(d[i]);
-//	}
+	deltas_ = dlts;
+	errors_ = deltas_ * weights_.block(0, 1, weights_.rows(), weights_.cols() - 1);
 }
 
 std::string cppbp::layer::FullyConnected::summary() const
 {
 	stringstream ss{};
-	ss << "Fully Connected [" << neurons_.size() << "]:{\n";
-	for (const auto& n : neurons_)
+	ss << "Fully Connected [" << len_ << "]:{\n";
+	for (const auto& row : weights_.rowwise())
 	{
-		ss << "" << n->summary() << "\n";
+		ss << "" << row << "\n";
 	}
 	ss << "}";
+
 	if (next_)
 	{
 		ss << "\n";
@@ -141,9 +128,11 @@ cppbp::layer::IActivationFunction& cppbp::layer::FullyConnected::activation_func
 
 void cppbp::layer::FullyConnected::reshape(size_t input)
 {
-	for (auto& n : neurons_)
-	{
-		n->reshape(input);
-	}
+	weights_ = MatrixXd::Random(len_, input + 1);
+}
+
+void cppbp::layer::FullyConnected::set_errors(Eigen::VectorXd errors)
+{
+	errors_ = errors;
 }
 

@@ -103,7 +103,7 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
 //
 //			std::vector<double> errors = loss_->error(predicts, label, output_->activation_function());
 //
-//			output_->set_errors(errors);
+//			output_->set_deltas(errors);
 //			this->backprop();
 //			this->optimize(opt);
 //

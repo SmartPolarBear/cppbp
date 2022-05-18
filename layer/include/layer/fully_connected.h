@@ -34,11 +34,13 @@ class FullyConnected
 
 	[[nodiscard]] std::vector<double> get() const override;
 
-	void set_errors(Eigen::VectorXd error) override;
+	void set_deltas(Eigen::VectorXd dlts) override;
 
 	void backprop() override;
 
 	void forward() override;
+
+	void set_errors(Eigen::VectorXd errors) override;
 
 	void optimize(optimizer::IOptimizer& opt) override;
 
@@ -53,9 +55,13 @@ class FullyConnected
 
 	IActivationFunction* act_func_{ nullptr };
 
-	std::vector<std::shared_ptr<Neuron>> neurons_{};
+	Eigen::MatrixXd weights_{};
 
+	Eigen::VectorXd input_;
 	Eigen::VectorXd activations_;
+
+	Eigen::VectorXd deltas_;
+	Eigen::VectorXd errors_;
 
 	size_t len_{};
 

@@ -33,7 +33,9 @@ class ILayer
 
 	virtual void set(Eigen::VectorXd vec) = 0;
 
-	virtual void set_errors(Eigen::VectorXd error) = 0;
+	virtual void set_deltas(Eigen::VectorXd deltas) = 0;
+	virtual void set_errors(Eigen::VectorXd errors) = 0;
+
 
 	virtual std::vector<double> get() const = 0;
 
