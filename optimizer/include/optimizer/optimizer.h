@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <Eigen/Eigen>
 
 namespace cppbp::optimizer
 {
@@ -12,7 +13,7 @@ class IOptimizer
 {
  public:
 	virtual void step() = 0;
-	virtual double optimize(double prev, double grad) = 0;
+	virtual Eigen::MatrixXd optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads) = 0;
 };
 
 class IOptimizable

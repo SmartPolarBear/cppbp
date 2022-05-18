@@ -5,20 +5,22 @@
 #include <optimizer/fixed_step_optimizer.h>
 
 #include <algorithm>
+#include "Eigen/Core"
 
 using namespace std;
+
+cppbp::optimizer::FixedStepOptimizer::FixedStepOptimizer(double lr)
+	: lr_(lr)
+{
+}
 
 void cppbp::optimizer::FixedStepOptimizer::step()
 {
 	step_++;
 }
 
-double cppbp::optimizer::FixedStepOptimizer::optimize(double prev, double grads)
+Eigen::MatrixXd cppbp::optimizer::FixedStepOptimizer::optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads)
 {
-	return prev - lr_ * grads;
+	return prev + lr_ * grads;
 }
 
-cppbp::optimizer::FixedStepOptimizer::FixedStepOptimizer(double lr)
-	: lr_(lr)
-{
-}

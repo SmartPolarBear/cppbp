@@ -102,9 +102,12 @@ void cppbp::layer::Input::reshape(size_t input)
 	len_ = input;
 }
 
-void cppbp::layer::Input::optimize(cppbp::optimizer::IOptimizer& iOptimizer)
+void cppbp::layer::Input::optimize(cppbp::optimizer::IOptimizer& opt)
 {
-	// Do nothing
+	if (next())
+	{
+		next()->optimize(opt);
+	}
 }
 
 void cppbp::layer::Input::set_prev(cppbp::layer::ILayer* prev)

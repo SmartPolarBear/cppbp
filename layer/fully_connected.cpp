@@ -55,7 +55,7 @@ void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 {
 	VectorXd aug{ 1 + prev()->get().size() };
 	aug << 1, prev()->get();
-	weights_ += 0.1 * deltas_ * aug.transpose();// TODO: use optimizer
+	weights_ = opt.optimize(weights_, deltas_ * aug.transpose());
 
 	if (next_)
 	{

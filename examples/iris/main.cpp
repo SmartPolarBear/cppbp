@@ -24,30 +24,31 @@ using namespace cppbp::dataloader;
 
 using namespace std;
 
-//int argmax(const std::vector<double>& vals)
-//{
-//	int ret = 0;
-//	for (int i = 1; i < vals.size(); i++)
-//	{
-//		if (vals[i] > vals[ret])
-//		{
-//			ret = i;
-//		}
-//	}
-//	return ret;
-//}
+int argmax(const Eigen::VectorXd& vals)
+{
+	int ret = 0;
+	for (int i = 1; i < vals.size(); i++)
+	{
+		if (vals[i] > vals[ret])
+		{
+			ret = i;
+		}
+	}
+	return ret;
+}
 
 int main()
 {
 	Sigmoid sigmoid{};
 
 	Input in{ 4 };
+	FullyConnected fc1{ 5, sigmoid };
 	FullyConnected fc2{ 8, sigmoid };
-	FullyConnected fc3{ 6, sigmoid };
+	FullyConnected fc3{ 12, sigmoid };
 	FullyConnected out{ 3, sigmoid };
 
 	MSELoss loss{};
-	Model model{ in.connect(fc2).connect(fc3).connect(out), loss };
+	Model model{ in | fc1 | fc2 | fc3 | out, loss };
 
 	std::cout << model.summary() << endl;
 
@@ -55,13 +56,13 @@ int main()
 	DataLoader dl{ iris, 16, true };
 
 	FixedStepOptimizer optimizer{ 0.2 };
-	model.fit(dl, 100, optimizer, true);
+	model.fit(dl, 1600, optimizer, false);
 
 	for (int i = 0; i < iris.size(); i++)
 	{
 		auto [data, label] = iris.get(i);
 		auto ret = model(data);
-		cout << label.transpose() << ", " << ret.transpose() << endl;
+		cout << argmax(label) << ", " << argmax(ret) << endl;
 	}
 
 	return 0;

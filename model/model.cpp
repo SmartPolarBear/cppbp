@@ -81,7 +81,7 @@ std::string cppbp::model::Model::summary() const
 void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer& opt)
 {
 	opt.step();
-	input_->next()->optimize(opt);
+	input_->optimize(opt);
 }
 
 void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
