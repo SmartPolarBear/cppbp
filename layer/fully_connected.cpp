@@ -82,7 +82,7 @@ std::string cppbp::layer::FullyConnected::summary() const
 	ss << "Fully Connected [" << len_ << "]:{\n";
 	for (const auto& row : weights_.rowwise())
 	{
-		ss << "" << row << "\n";
+		ss << "[1 Bias, weights]=" << row << "\n";
 	}
 	ss << "}";
 

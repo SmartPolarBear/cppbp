@@ -3,14 +3,14 @@ project(cppbp)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_library(cppbp STATIC main.cpp)
+add_library(cppbp STATIC library.cpp)
 
 add_subdirectory(libs)
 
 target_link_libraries(cppbp
         INTERFACE Eigen3::Eigen
-        INTERFACE csv2::csv2)
-
+        INTERFACE csv2::csv2
+        INTERFACE fmt::fmt)
 
 add_subdirectory(base)
 add_subdirectory(dataloader)
