@@ -5,9 +5,11 @@
 #pragma once
 
 #include <layer/layer.h>
-#include <layer/neuron.h>
 
 #include <utils/counter.h>
+
+#include <Eigen/Eigen>
+
 
 #include <cstdint>
 #include <vector>
@@ -20,11 +22,14 @@ class FullyConnected
 {
  public:
 	ILayer* next() override;
+
 	ILayer* prev() override;
- public:
+
 	explicit FullyConnected(size_t len, IActivationFunction& af);
 
 	void reshape(size_t input) override;
+	void set_prev(ILayer* prev) override;
+	void set_next(ILayer* next) override;
 
 	ILayer& connect(ILayer& next) override;
 
@@ -32,7 +37,7 @@ class FullyConnected
 
 	void set(Eigen::VectorXd vec) override ;
 
-	[[nodiscard]] std::vector<double> get() const override;
+	[[nodiscard]] Eigen::VectorXd get() const override;
 
 	void set_deltas(Eigen::VectorXd dlts) override;
 
@@ -65,8 +70,8 @@ class FullyConnected
 
 	size_t len_{};
 
-	FullyConnected* next_{};
-	FullyConnected* prev_{};
+	ILayer* next_{};
+	ILayer* prev_{};
 };
 
 }

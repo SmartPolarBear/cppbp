@@ -3,7 +3,7 @@
 //
 
 #include <layer/fully_connected.h>
-#include <layer/sigmoid.h>
+#include <layer/input.h>
 
 #include <model/model.h>
 
@@ -41,18 +41,19 @@ int main()
 {
 	Sigmoid sigmoid{};
 
-	FullyConnected fc1{ 4, sigmoid };
+	Input in{ 4 };
 	FullyConnected fc2{ 8, sigmoid };
-	FullyConnected fc3{ 3, sigmoid };
+	FullyConnected fc3{ 6, sigmoid };
+	FullyConnected out{ 3, sigmoid };
 
 	MSELoss loss{};
-	Model model{ fc1.connect(fc2).connect(fc3), loss };
+	Model model{ in.connect(fc2).connect(fc3).connect(out), loss };
 
 	std::cout << model.summary() << endl;
 
 	vector<double> input{ 0, 1, 2, 3 };
-	auto out = model(input);
-	for (auto o : out)
+	auto val = model(input);
+	for (auto o : val)
 	{
 		cout << o << " ";
 	}

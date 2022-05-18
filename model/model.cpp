@@ -48,7 +48,14 @@ std::vector<double> cppbp::model::Model::operator()(std::vector<double> input)
 {
 	set(std::move(input));
 	input_->forward();
-	return output_->get();
+
+	auto output = output_->get();
+	std::vector<double> ret;
+	for (int i = 0; i < output.size(); i++)
+	{
+		ret.emplace_back(output[i]);
+	}
+	return ret;
 }
 
 void cppbp::model::Model::forward()

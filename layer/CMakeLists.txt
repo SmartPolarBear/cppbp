@@ -4,7 +4,7 @@ target_include_directories(cppbp INTERFACE include)
 
 target_sources(cppbp
         INTERFACE fully_connected.cpp
-        INTERFACE neuron.cpp
+        INTERFACE input.cpp
         INTERFACE sigmoid.cpp)
 
 

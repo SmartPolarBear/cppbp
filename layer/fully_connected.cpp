@@ -16,14 +16,12 @@ cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivati
 	id_ = cppbp::layer::FullyConnected::objects_alive;
 }
 
-cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& n)
+cppbp::layer::ILayer& cppbp::layer::FullyConnected::connect(ILayer& next)
 {
-	auto& next = dynamic_cast<FullyConnected&>(n); //FIXME
-
 	next.reshape(len_);
 
-	next_ = &next;
-	next.prev_ = this;
+	this->set_next(&next);
+	next.set_prev(this);
 
 	return next;
 }
@@ -32,7 +30,7 @@ void cppbp::layer::FullyConnected::backprop()
 {
 	VectorXd prev_activation;
 
-	prev_activation << 1, prev_->activations_; // TODO: add a separate input layer class
+	prev_activation << 1, prev_->get(); // TODO: add a separate input layer class
 
 	prev_->set_deltas(errors_.cwiseProduct(act_func_->derive(activations_)));
 }
@@ -91,14 +89,9 @@ std::string cppbp::layer::FullyConnected::summary() const
 	return ss.str();
 }
 
-std::vector<double> cppbp::layer::FullyConnected::get() const
+Eigen::VectorXd cppbp::layer::FullyConnected::get() const
 {
-	std::vector<double> vals{};
-	for (int i = 0; i < len_; i++)
-	{
-		vals.emplace_back(activations_[i]);
-	}
-	return vals;
+	return activations_;
 }
 
 string cppbp::layer::FullyConnected::name() const
@@ -136,3 +129,12 @@ void cppbp::layer::FullyConnected::set_errors(Eigen::VectorXd errors)
 	errors_ = errors;
 }
 
+void cppbp::layer::FullyConnected::set_prev(cppbp::layer::ILayer* prev)
+{
+	prev_ = prev;
+}
+
+void cppbp::layer::FullyConnected::set_next(cppbp::layer::ILayer* next)
+{
+	next_ = next;
+}

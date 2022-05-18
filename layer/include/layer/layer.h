@@ -34,15 +34,17 @@ class ILayer
 	virtual void set(Eigen::VectorXd vec) = 0;
 
 	virtual void set_deltas(Eigen::VectorXd deltas) = 0;
+
 	virtual void set_errors(Eigen::VectorXd errors) = 0;
 
-
-	virtual std::vector<double> get() const = 0;
+	virtual Eigen::VectorXd get() const = 0;
 
 	virtual IActivationFunction& activation_function() = 0;
 
 	virtual ILayer& operator|(ILayer& next) = 0;
 
 	virtual void reshape(size_t input) = 0;
+
+
 };
 }
