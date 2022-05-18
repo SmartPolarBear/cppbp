@@ -13,6 +13,8 @@
 #include <dataloader/iris_dataset.h>
 #include <dataloader/dataloader.h>
 
+#include <fmt/format.h>
+
 #include <iostream>
 #include <vector>
 
@@ -62,7 +64,7 @@ int main()
 	{
 		auto [data, label] = iris.get(i);
 		auto ret = model(data);
-		cout << argmax(label) << ", " << argmax(ret) << endl;
+		cout << fmt::format("Ground Truth:{}, Predict:{}", argmax(label), argmax(ret)) << endl;
 	}
 
 	return 0;

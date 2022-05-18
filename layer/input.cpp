@@ -4,7 +4,7 @@
 
 #include <layer/input.h>
 
-#include <format>
+#include <fmt/format.h>
 
 using namespace std;
 using namespace Eigen;
@@ -46,7 +46,7 @@ std::string cppbp::layer::Input::name() const
 std::string cppbp::layer::Input::summary() const
 {
 	stringstream ss{};
-	ss << std::format("Input [{}]", len_);
+	ss << fmt::format("Input [{}]", len_);
 
 	if (next_)
 	{

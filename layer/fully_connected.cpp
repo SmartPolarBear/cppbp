@@ -6,6 +6,8 @@
 
 #include <sstream>
 
+#include <fmt/format.h>
+
 using namespace std;
 
 using namespace Eigen;
@@ -79,10 +81,10 @@ void cppbp::layer::FullyConnected::set_deltas(Eigen::VectorXd dlts)
 std::string cppbp::layer::FullyConnected::summary() const
 {
 	stringstream ss{};
-	ss << "Fully Connected [" << len_ << "]:{\n";
+	ss << fmt::format("Fully Connected [{} neurons]:{{\n", len_);
 	for (const auto& row : weights_.rowwise())
 	{
-		ss << "[1 Bias, weights]=" << row << "\n";
+		ss << fmt::format("[1 Bias, {} weights]=", len_) << row << "\n"; // TODO: custom formatter
 	}
 	ss << "}";
 
@@ -102,7 +104,7 @@ Eigen::VectorXd cppbp::layer::FullyConnected::get() const
 
 string cppbp::layer::FullyConnected::name() const
 {
-	return "fc" + to_string(id_);
+	return fmt::format("fc {}", id_);
 }
 
 cppbp::layer::ILayer& cppbp::layer::FullyConnected::operator|(cppbp::layer::ILayer& next)
