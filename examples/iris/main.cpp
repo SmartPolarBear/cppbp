@@ -4,6 +4,7 @@
 
 #include <layer/fully_connected.h>
 #include <layer/input.h>
+#include <layer/relu.h>
 
 #include <model/model.h>
 
@@ -41,12 +42,22 @@ int argmax(const Eigen::VectorXd& vals)
 
 int main()
 {
+//	Sigmoid sigmoid{};
+//
+//
+//	Input in{ 4 };
+//	FullyConnected fc1{ 5, sigmoid };
+//	FullyConnected fc2{ 8, sigmoid };
+//	FullyConnected fc3{ 12, sigmoid };
+//	FullyConnected out{ 3, sigmoid };
+
 	Sigmoid sigmoid{};
+	Relu relu{};
 
 	Input in{ 4 };
-	FullyConnected fc1{ 5, sigmoid };
-	FullyConnected fc2{ 8, sigmoid };
-	FullyConnected fc3{ 12, sigmoid };
+	FullyConnected fc1{ 5, relu };
+	FullyConnected fc2{ 8, relu };
+	FullyConnected fc3{ 12, relu };
 	FullyConnected out{ 3, sigmoid };
 
 	MSELoss loss{};
