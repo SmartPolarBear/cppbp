@@ -21,7 +21,7 @@ double cppbp::optimizer::MSELoss::operator()(Eigen::VectorXd value, Eigen::Vecto
 
 Eigen::VectorXd cppbp::optimizer::MSELoss::derive(Eigen::VectorXd value, Eigen::VectorXd label)
 {
-	return label - value;
+	return value - label;
 }
 
 

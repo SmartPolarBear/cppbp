@@ -55,7 +55,7 @@ int main()
 	Relu relu{};
 
 	Input in{ 4 };
-	FullyConnected fc1{ 5, relu };
+	FullyConnected fc1{ 5, sigmoid };
 	FullyConnected fc2{ 8, relu };
 	FullyConnected fc3{ 12, relu };
 	FullyConnected out{ 3, sigmoid };
