@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <base/serializable.h>
+
 #include <layer/layer.h>
 #include <layer/sigmoid.h>
 
@@ -15,13 +17,16 @@
 namespace cppbp::layer
 {
 class Input
-	: public ILayer
+	: public ILayer,
+	  public base::ISerializable
 {
  public:
 	explicit Input(size_t size);
 
 	void backprop() override;
 	void forward() override;
+	std::tuple<std::unique_ptr<char>, size_t> serialize() override;
+	std::unique_ptr<char> deserialize(std::unique_ptr<char> data) override;
 	ILayer* next() override;
 	ILayer* prev() override;
 	std::string name() const override;

@@ -138,3 +138,23 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
 
 	}
 }
+
+void cppbp::model::Model::save(const string& filename)
+{
+
+}
+
+std::optional<cppbp::model::Model> cppbp::model::Model::from_file(const string& filename)
+{
+	return std::nullopt;
+}
+
+std::tuple<std::unique_ptr<char>, size_t> cppbp::model::Model::serialize()
+{
+	return std::unique_ptr<char>();
+}
+
+std::unique_ptr<char> cppbp::model::Model::deserialize(std::unique_ptr<char> data)
+{
+
+}
