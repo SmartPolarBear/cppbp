@@ -22,6 +22,7 @@ class Input
 	: public ILayer
 {
  public:
+	Input() = default;
 	explicit Input(size_t size);
 
 	void backprop() override;

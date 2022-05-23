@@ -24,8 +24,12 @@ class FullyConnected
 	  public utils::Counter<FullyConnected>
 {
  public:
+	FullyConnected() = default;
+
 	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+
 	char* deserialize(char* data) override;
+
 	ILayer* next() override;
 
 	ILayer* prev() override;
