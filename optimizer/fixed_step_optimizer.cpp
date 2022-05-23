@@ -3,8 +3,6 @@
 //
 
 #include <optimizer/fixed_step_optimizer.h>
-
-#include <algorithm>
 #include "Eigen/Core"
 
 using namespace std;
