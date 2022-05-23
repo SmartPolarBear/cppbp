@@ -67,5 +67,10 @@ class Model
 	layer::ILayer* input_{}, * output_{};
 	std::string name_{ "Model" };
 	optimizer::ILossFunction* loss_{};
+
+	// To work around lifetime issues
+	std::shared_ptr<optimizer::ILossFunction> restored_loss_{};
+	std::vector<std::shared_ptr<layer::ILayer>> restored_layers_{};
+
 };
 }
