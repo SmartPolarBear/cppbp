@@ -9,6 +9,8 @@
 #include <layer/layer.h>
 #include <layer/sigmoid.h>
 
+#include <model/persist.h>
+
 #include <Eigen/Eigen>
 
 #include <cstdint>
@@ -52,4 +54,11 @@ class Input
 	Sigmoid placeholder{};
 
 };
+
+template<>
+struct cppbp::model::persist::LayerTypeId<Input>
+{
+	static inline constexpr uint32_t value = 1;
+};
+
 }

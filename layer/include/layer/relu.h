@@ -3,7 +3,10 @@
 //
 
 #pragma once
+
 #include <layer/activation_function.h>
+
+#include <model/persist.h>
 
 namespace cppbp::layer
 {
@@ -17,4 +20,11 @@ class Relu
 	Eigen::VectorXd eval(Eigen::VectorXd x) override;
 	Eigen::VectorXd derive(Eigen::VectorXd y) override;
 };
+
+template<>
+struct cppbp::model::persist::ActivationFunctionTypeId<Relu>
+{
+	static inline constexpr uint32_t value = 2;
+};
+
 }

@@ -5,8 +5,11 @@
 #pragma once
 #include <layer/activation_function.h>
 
+#include <model/persist.h>
+
 namespace cppbp::layer
 {
+
 class Sigmoid final
 	: public IActivationFunction
 {
@@ -17,4 +20,11 @@ class Sigmoid final
 	Eigen::VectorXd eval(Eigen::VectorXd x) override;
 	Eigen::VectorXd derive(Eigen::VectorXd y) override;
 };
+
+template<>
+struct cppbp::model::persist::ActivationFunctionTypeId<Sigmoid>
+{
+	static inline constexpr uint32_t value = 1;
+};
+
 }
