@@ -146,3 +146,14 @@ void cppbp::layer::FullyConnected::set_next(cppbp::layer::ILayer* next)
 {
 	next_ = next;
 }
+
+std::tuple<std::unique_ptr<char>, size_t> cppbp::layer::FullyConnected::serialize()
+{
+	auto size=sizeof(layer_descriptor)
+	return std::unique_ptr<char>();
+}
+
+std::unique_ptr<char> cppbp::layer::FullyConnected::deserialize(std::unique_ptr<char> data)
+{
+
+}

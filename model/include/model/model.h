@@ -6,12 +6,17 @@
 
 #include <layer/layer.h>
 
+#include <base/serializable.h>
+
 #include <optimizer/optimizer.h>
 #include <optimizer/loss.h>
+
+#include <model/persist.h>
 
 #include <dataloader/dataloader.h>
 
 #include <vector>
+#include <optional>
 
 namespace cppbp::model
 {
@@ -20,6 +25,7 @@ class Model
 	  public base::IBackProp,
 	  public base::ISummary,
 	  public base::INamable,
+	  public base::ISerializable,
 	  public optimizer::IOptimizable
 {
  public:
@@ -40,6 +46,14 @@ class Model
 	[[nodiscard]] std::string summary() const override;
 
 	void optimize(optimizer::IOptimizer& iOptimizer) override;
+
+	void save(const std::string& filename);
+
+	static inline std::optional<Model> from_file(const std::string& filename);
+
+	std::tuple<std::unique_ptr<char>, size_t> serialize() override;
+
+	std::unique_ptr<char> deserialize(std::unique_ptr<char> data) override;
 
  private:
 	void set(std::vector<double> values);

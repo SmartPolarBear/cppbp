@@ -4,10 +4,14 @@
 
 #include <layer/input.h>
 
+#include <model/persist.h>
+
 #include <fmt/format.h>
 
 using namespace std;
 using namespace Eigen;
+
+using namespace cppbp::model::persist;
 
 cppbp::layer::Input::Input(size_t size)
 	: len_(size)
@@ -118,4 +122,15 @@ void cppbp::layer::Input::set_prev(cppbp::layer::ILayer* prev)
 void cppbp::layer::Input::set_next(cppbp::layer::ILayer* next)
 {
 	next_ = next;
+}
+
+std::tuple<std::unique_ptr<char>, size_t> cppbp::layer::Input::serialize()
+{
+	auto size = sizeof(layer_descriptor);
+	return std::unique_ptr<char>();
+}
+
+std::unique_ptr<char> cppbp::layer::Input::deserialize(std::unique_ptr<char> data)
+{
+
 }

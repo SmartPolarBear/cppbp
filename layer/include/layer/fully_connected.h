@@ -4,12 +4,13 @@
 
 #pragma once
 
+#include <base/serializable.h>
+
 #include <layer/layer.h>
 
 #include <utils/counter.h>
 
 #include <Eigen/Eigen>
-
 
 #include <cstdint>
 #include <vector>
@@ -18,9 +19,12 @@ namespace cppbp::layer
 {
 class FullyConnected
 	: public ILayer,
+	  public base::ISerializable,
 	  public utils::Counter<FullyConnected>
 {
  public:
+	std::tuple<std::unique_ptr<char>, size_t> serialize() override;
+	std::unique_ptr<char> deserialize(std::unique_ptr<char> data) override;
 	ILayer* next() override;
 
 	ILayer* prev() override;
@@ -37,7 +41,7 @@ class FullyConnected
 
 	ILayer& operator|(ILayer& next) override;
 
-	void set(Eigen::VectorXd vec) override ;
+	void set(Eigen::VectorXd vec) override;
 
 	[[nodiscard]] Eigen::VectorXd get() const override;
 
