@@ -51,9 +51,9 @@ class Model
 
 	static inline std::optional<Model> from_file(const std::string& filename);
 
-	std::tuple<std::unique_ptr<char>, size_t> serialize() override;
+	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
 
-	std::unique_ptr<char> deserialize(std::unique_ptr<char> data) override;
+	char* deserialize(char* data) override;
 
  private:
 	void set(std::vector<double> values);

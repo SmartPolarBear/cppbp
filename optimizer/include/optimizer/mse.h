@@ -6,8 +6,6 @@
 
 #include <optimizer/loss.h>
 
-#include <model/persist.h>
-
 
 namespace cppbp::optimizer
 {
@@ -18,14 +16,9 @@ class MSELoss
 	double operator()(Eigen::VectorXd value, Eigen::VectorXd label) override;
 	double eval(Eigen::VectorXd value, Eigen::VectorXd label) override;
 	Eigen::VectorXd derive(Eigen::VectorXd value, Eigen::VectorXd label) override;
+	uint32_t type_id() override;
 
 };
 
-
-template<>
-struct cppbp::model::persist::LossFunctionTypeId<MSELoss>
-{
-	static inline constexpr uint32_t value = 1;
-};
 
 }

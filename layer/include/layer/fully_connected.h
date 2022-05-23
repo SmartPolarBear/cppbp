@@ -21,12 +21,11 @@ namespace cppbp::layer
 {
 class FullyConnected
 	: public ILayer,
-	  public base::ISerializable,
 	  public utils::Counter<FullyConnected>
 {
  public:
-	std::tuple<std::unique_ptr<char>, size_t> serialize() override;
-	std::unique_ptr<char> deserialize(std::unique_ptr<char> data) override;
+	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+	char* deserialize(char* data) override;
 	ILayer* next() override;
 
 	ILayer* prev() override;
@@ -82,10 +81,10 @@ class FullyConnected
 	ILayer* prev_{};
 };
 
+}
+
 template<>
-struct cppbp::model::persist::LayerTypeId<FullyConnected>
+struct cppbp::model::persist::LayerTypeId<cppbp::layer::FullyConnected>
 {
 	static inline constexpr uint32_t value = 2;
 };
-
-}
