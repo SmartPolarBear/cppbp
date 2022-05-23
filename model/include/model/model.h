@@ -12,6 +12,7 @@
 #include <optimizer/loss.h>
 
 #include <model/persist.h>
+#include <model/callback.h>
 
 #include <dataloader/dataloader.h>
 
@@ -39,7 +40,9 @@ class Model
 	void fit(cppbp::dataloader::DataLoader& dl,
 		size_t epoch,
 		cppbp::optimizer::IOptimizer& opt,
-		bool verbose);
+		bool verbose,
+		size_t callback_skip_epoch = 100,
+		std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks = std::nullopt);
 
 	[[nodiscard]] std::string name() const override;
 
@@ -56,7 +59,7 @@ class Model
 	char* deserialize(char* data) override;
 
  private:
-	Model();
+	Model() = default;
 
 	void set(std::vector<double> values);
 
