@@ -3,6 +3,7 @@
 //
 
 #include <model/model.h>
+#include <model/basic_information.h>
 
 #include <optimizer/mse.h>
 
@@ -19,6 +20,7 @@ using namespace std;
 using namespace Eigen;
 
 using namespace cppbp::layer;
+using namespace cppbp::model;
 using namespace cppbp::model::persist;
 using namespace cppbp::optimizer;
 
@@ -98,25 +100,60 @@ void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer& opt)
 void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
 	size_t epoch,
 	cppbp::optimizer::IOptimizer& opt,
-	bool verbose)
+	bool verbose,
+	size_t callback_skip_epoch,
+	std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks)
 {
+	std::vector<std::shared_ptr<IModelCallback>> callbacks{};
+	if (cbks.has_value())
+	{
+		callbacks.assign(cbks.value().begin(), cbks.value().end());
+	}
+
+	if (verbose && callbacks.empty())
+	{
+		callbacks.push_back(IModelCallback::make<LossOutputCallback>());
+	}
+
+	const auto should_callback = [verbose, callback_skip_epoch](int64_t epoch)
+	{
+	  return verbose && !(epoch % callback_skip_epoch);
+	};
+
+	if (verbose)
+	{
+		for (auto& c : callbacks)
+		{
+			std::cout << c->before_world() << " ";
+		}
+		std::cout << std::endl;
+	}
+
 	for (size_t e = 0; e < epoch; e++)
 	{
-		if (verbose)
+		if (should_callback(e))
 		{
-			std::cout << "Epoch: " << e << std::endl << "Train..." << std::endl;
-
+			std::cout << "Epoch: " << e << std::endl << "Train..." << " ";
+			for (auto& c : callbacks)
+			{
+				std::cout << c->before_train(e);
+			}
+			std::cout << std::endl;
 		}
+
 		auto batch = dl.train_batch();
 		for (size_t step = 0; auto& [data, label] : batch)
 		{
 			auto predicts = (*this)(data);
 			auto loss = (*loss_)(predicts, label);
 
-			if (verbose)
+			if (should_callback(e))
 			{
-				std::cout << "Step:" << step << " Loss:" << loss << " ";
-				//TODO
+				std::cout << "Step:" << step << " ";
+				for (auto& c : callbacks)
+				{
+					std::cout << c->train_step(step, make_pair(data, label), predicts, loss) << " ";
+				}
 				std::cout << std::endl;
 			}
 
@@ -129,24 +166,61 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
 			step++;
 		}
 
-		if (verbose)
+		if (should_callback(e))
 		{
-			std::cout << "Eval..." << std::endl;
+			for (auto& c : callbacks)
+			{
+				std::cout << c->after_train(e) << " ";
+			}
+			std::cout << endl;
 		}
+
+		if (should_callback(e))
+		{
+			std::cout << "Eval...";
+			for (auto& c : callbacks)
+			{
+				std::cout << c->before_eval(e) << " ";
+			}
+			std::cout << endl;
+		}
+
 		batch = dl.eval_batch();
 		for (size_t step = 0; auto& [data, label] : batch)
 		{
 			auto predicts = (*this)(data);
 			auto loss = (*loss_)(predicts, label);
-			if (verbose)
+			if (should_callback(e))
 			{
-				std::cout << "Step:" << step << " Loss:" << loss << " ";
-				//TODO
+				std::cout << "Step:" << step << " ";
+				for (auto& c : callbacks)
+				{
+					std::cout << c->eval_step(step, make_pair(data, label), predicts, loss) << " ";
+				}
 				std::cout << std::endl;
 			}
+
 			step++;
 		}
 
+		if (should_callback(e))
+		{
+			for (auto& c : callbacks)
+			{
+				std::cout << c->after_eval(e) << " ";
+			}
+			std::cout << std::endl;
+		}
+
+	}
+
+	if (verbose)
+	{
+		for (auto& c : callbacks)
+		{
+			std::cout << c->after_world() << " ";
+		}
+		std::cout << std::endl;
 	}
 }
 
