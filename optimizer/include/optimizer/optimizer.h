@@ -4,7 +4,9 @@
 
 #pragma once
 
+
 #include <vector>
+
 #include <Eigen/Eigen>
 
 namespace cppbp::optimizer

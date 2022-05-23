@@ -19,16 +19,15 @@
 namespace cppbp::layer
 {
 class Input
-	: public ILayer,
-	  public base::ISerializable
+	: public ILayer
 {
  public:
 	explicit Input(size_t size);
 
 	void backprop() override;
 	void forward() override;
-	std::tuple<std::unique_ptr<char>, size_t> serialize() override;
-	std::unique_ptr<char> deserialize(std::unique_ptr<char> data) override;
+	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+	char* deserialize(char* data) override;
 	ILayer* next() override;
 	ILayer* prev() override;
 	std::string name() const override;
@@ -55,10 +54,10 @@ class Input
 
 };
 
+}
+
 template<>
-struct cppbp::model::persist::LayerTypeId<Input>
+struct cppbp::model::persist::LayerTypeId<cppbp::layer::Input>
 {
 	static inline constexpr uint32_t value = 1;
 };
-
-}

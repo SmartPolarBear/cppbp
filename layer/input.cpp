@@ -124,20 +124,26 @@ void cppbp::layer::Input::set_next(cppbp::layer::ILayer* next)
 	next_ = next;
 }
 
-std::tuple<std::unique_ptr<char>, size_t> cppbp::layer::Input::serialize()
+std::tuple<std::shared_ptr<char[]>, size_t> cppbp::layer::Input::serialize()
 {
-	auto size = sizeof(LayerDescriptor);
+	size_t size = sizeof(LayerDescriptor);
 
-	auto ret = make_unique<char[]>(size);
+	auto ret = make_shared<char[]>(size);
 
 	auto desc = reinterpret_cast<LayerDescriptor*>(ret.get());
-	desc->type = LDT_INPUT;
-	desc->act_func = ACF_NONE;
 
-	return { ret, size };
+	desc->type = LayerTypeId<Input>::value;
+	desc->act_func = 0;
+	desc->inputs = len_;
+
+	return make_tuple(ret, size);
 }
 
-std::unique_ptr<char> cppbp::layer::Input::deserialize(std::unique_ptr<char> data)
+char* cppbp::layer::Input::deserialize(char* data)
 {
+	auto desc = reinterpret_cast<LayerDescriptor*>(data);
 
+	len_ = desc->inputs;
+
+	return data + sizeof(LayerDescriptor);
 }
