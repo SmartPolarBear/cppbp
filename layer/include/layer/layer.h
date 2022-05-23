@@ -16,6 +16,7 @@
 
 #include <Eigen/Eigen>
 
+
 #include <memory>
 #include <vector>
 
@@ -48,4 +49,5 @@ class ILayer
 	virtual void reshape(size_t input) = 0;
 
 };
+
 }

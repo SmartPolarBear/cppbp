@@ -156,5 +156,5 @@ std::tuple<std::shared_ptr<char[]>, size_t> cppbp::model::Model::serialize()
 
 char* cppbp::model::Model::deserialize(char* data)
 {
-
+	return nullptr;
 }
