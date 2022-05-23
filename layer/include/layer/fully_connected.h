@@ -79,6 +79,9 @@ class FullyConnected
 
 	ILayer* next_{};
 	ILayer* prev_{};
+
+	// To work around the lifetime issues
+	std::shared_ptr<IActivationFunction> restored_act_func_{};
 };
 
 }
