@@ -181,6 +181,8 @@ char* cppbp::layer::FullyConnected::deserialize(char* data)
 	data += sizeof(LayerDescriptor);
 
 	// TODO: restore information
+	restored_act_func_ = ActivationFunctionFactory::from_id(desc->act_func);
+	act_func_ = restored_act_func_.get();
 
 	len_ = desc->rows;
 	reshape(desc->cols);

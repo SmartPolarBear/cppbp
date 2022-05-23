@@ -7,6 +7,8 @@
 #include <utility>
 #include <iostream>
 
+#include <fstream>
+
 using namespace std;
 
 using namespace Eigen;
@@ -141,17 +143,48 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
 
 void cppbp::model::Model::save(const string& filename)
 {
-
+	ofstream ofs{ filename, ios::binary };
+	auto [mem, sz] = serialize();
+	ofs.write(mem.get(), sz);
 }
 
 std::optional<cppbp::model::Model> cppbp::model::Model::from_file(const string& filename)
 {
-	return std::nullopt;
+	std::ifstream infile{ filename, ios::binary };
+
+	infile.seekg(0, std::ios::end);
+	size_t length = infile.tellg();
+	infile.seekg(0, std::ios::beg);
+
+	auto buffer = make_unique<char[]>(length);
+
+	infile.read(buffer.get(), length);
+
+	Model mdl{};
+	mdl.deserialize(buffer.get());
+
+	return mdl;
 }
 
 std::tuple<std::shared_ptr<char[]>, size_t> cppbp::model::Model::serialize()
 {
-	return {};
+	auto l = input_->next();
+	auto [mem, size] = input_->serialize();
+	while (l)
+	{
+		auto [m, s] = l->serialize();
+		auto old = mem;
+
+		mem = make_shared<char[]>(size + s);
+
+		memmove(mem.get(), old.get(), size);
+		memmove(mem.get() + size, m.get(), s);
+		size += s;
+
+		l = l->next();
+	}
+
+	return { mem, size };
 }
 
 char* cppbp::model::Model::deserialize(char* data)

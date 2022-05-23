@@ -56,6 +56,8 @@ class Model
 	char* deserialize(char* data) override;
 
  private:
+	Model();
+
 	void set(std::vector<double> values);
 
 	void forward() override;
