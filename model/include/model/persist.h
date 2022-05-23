@@ -10,8 +10,18 @@ namespace cppbp::model::persist
 
 static inline constexpr auto HEADER_MAGIC = "CPPBP000";
 
+template<typename>
+struct LossFunctionTypeId;
+
+template<typename>
+struct ActivationFunctionTypeId;
+
+template<typename>
+struct LayerTypeId;
+
+
 #pragma(pack(push, 1))
-struct header
+struct ModelHeader
 {
 	char magic[8]; //CPPBP000
 	uint32_t layer_nums;
@@ -21,7 +31,7 @@ struct header
 #pragma(pack(pop))
 
 #pragma(pack(push, 1))
-struct layer_descriptor
+struct LayerDescriptor
 {
 	uint32_t type;
 	uint32_t act_func;

@@ -8,6 +8,8 @@
 
 #include <layer/layer.h>
 
+#include <model/persist.h>
+
 #include <utils/counter.h>
 
 #include <Eigen/Eigen>
@@ -78,6 +80,12 @@ class FullyConnected
 
 	ILayer* next_{};
 	ILayer* prev_{};
+};
+
+template<>
+struct cppbp::model::persist::LayerTypeId<FullyConnected>
+{
+	static inline constexpr uint32_t value = 2;
 };
 
 }
