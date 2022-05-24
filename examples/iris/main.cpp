@@ -5,6 +5,7 @@
 #include <layer/fully_connected.h>
 #include <layer/input.h>
 #include <layer/relu.h>
+#include <layer/softmax.h>
 
 #include <model/model.h>
 
@@ -54,7 +55,7 @@ int main()
 
 	Sigmoid sigmoid{};
 	Relu relu{};
-
+	softmax softmax{};
 	Input in{ 4 };
 	FullyConnected fc1{ 5, sigmoid };
 	FullyConnected fc2{ 8, relu };

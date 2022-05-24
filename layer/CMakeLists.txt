@@ -6,6 +6,7 @@ target_sources(cppbp
         INTERFACE fully_connected.cpp
         INTERFACE input.cpp
         INTERFACE relu.cpp
-        INTERFACE sigmoid.cpp)
+        INTERFACE sigmoid.cpp
+        INTERFACE softmax.cpp)
 
 

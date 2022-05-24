@@ -11,10 +11,10 @@ double cppbp::optimizer::CELoss::eval(Eigen::VectorXd value, Eigen::VectorXd lab
 
 	double ret = 0.5 * (diff.dot(diff)) / value.size();
 	return ret;*/
-	auto loss = 0.;
-	for (auto i = 0; i < 3; ++i)
-		loss += -label[i] * std::log(value[i]);
-	return loss;
+	auto loss = 0.0;
+	for (auto i = 0; i < value.size(); ++i)
+		loss += label[i] * std::log(value[i])+(1-label[i])*std::log(1-value[i]);
+	return -loss/value.size();
 }
 
 double cppbp::optimizer::CELoss::operator()(Eigen::VectorXd value, Eigen::VectorXd label)
