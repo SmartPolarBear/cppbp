@@ -71,7 +71,7 @@ int main()
 	DataLoader dl{ iris, 16, true };
 
 	FixedStepOptimizer optimizer{ 0.2 };
-	model.fit(dl, 1800, optimizer, false);
+	model.fit(dl, 1800, optimizer, true, 100);
 
 	for (int i = 0; i < iris.size(); i++)
 	{

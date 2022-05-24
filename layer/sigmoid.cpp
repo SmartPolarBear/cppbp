@@ -34,3 +34,8 @@ Eigen::VectorXd cppbp::layer::Sigmoid::derive(Eigen::VectorXd y)
 	}
 	return y;
 }
+
+uint32_t cppbp::layer::Sigmoid::type_id()
+{
+	return 1;
+}

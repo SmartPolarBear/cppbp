@@ -24,5 +24,10 @@ Eigen::VectorXd cppbp::optimizer::MSELoss::derive(Eigen::VectorXd value, Eigen::
 	return value - label;
 }
 
+uint32_t cppbp::optimizer::MSELoss::type_id()
+{
+	return 1;
+}
+
 
 

@@ -42,3 +42,7 @@ Eigen::VectorXd cppbp::layer::Relu::derive(Eigen::VectorXd y)
 	}
 	return y;
 }
+uint32_t cppbp::layer::Relu::type_id()
+{
+	return 2;
+}

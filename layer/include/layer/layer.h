@@ -8,12 +8,14 @@
 #include <base/backprop.h>
 #include <base/summary.h>
 #include <base/linked.h>
+#include <base/serializable.h>
 
 #include <optimizer/optimizer.h>
 
 #include <layer/activation_function.h>
 
 #include <Eigen/Eigen>
+
 
 #include <memory>
 #include <vector>
@@ -25,6 +27,7 @@ class ILayer
 	  public base::IBackProp,
 	  public base::ISummary,
 	  public base::INamable,
+	  public base::ISerializable,
 	  public optimizer::IOptimizable,
 	  public base::ILinked<ILayer>
 {
@@ -45,6 +48,6 @@ class ILayer
 
 	virtual void reshape(size_t input) = 0;
 
-
 };
+
 }

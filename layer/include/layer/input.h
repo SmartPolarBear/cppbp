@@ -4,8 +4,12 @@
 
 #pragma once
 
+#include <base/serializable.h>
+
 #include <layer/layer.h>
 #include <layer/sigmoid.h>
+
+#include <model/persist.h>
 
 #include <Eigen/Eigen>
 
@@ -18,10 +22,13 @@ class Input
 	: public ILayer
 {
  public:
+	Input() = default;
 	explicit Input(size_t size);
 
 	void backprop() override;
 	void forward() override;
+	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+	char* deserialize(char* data) override;
 	ILayer* next() override;
 	ILayer* prev() override;
 	std::string name() const override;
@@ -47,4 +54,11 @@ class Input
 	Sigmoid placeholder{};
 
 };
+
 }
+
+template<>
+struct cppbp::model::persist::LayerTypeId<cppbp::layer::Input>
+{
+	static inline constexpr uint32_t value = 1;
+};
