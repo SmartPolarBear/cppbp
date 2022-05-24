@@ -5,8 +5,6 @@
 #include <layer/softmax.h>
 
 #include <algorithm>
-double total=0.0;
-double MAX=0.0;
 double cppbp::layer::softmax::operator()(double x)
 {
 	return eval(x);
@@ -14,26 +12,23 @@ double cppbp::layer::softmax::operator()(double x)
 
 double cppbp::layer::softmax::eval(double x)
 {
-	return std::exp(x-MAX);
+	return std::exp(x);
 }
 
 double cppbp::layer::softmax::derive(double y)
 {
-	return y/total;
+	return y*(1-y);
 }
 
 Eigen::VectorXd cppbp::layer::softmax::eval(Eigen::VectorXd x)
 {
-	MAX=x[0];
-	for (int i = 0; i < x.size(); i++)
-	{
-		MAX=std::max(MAX,x[i]);
-	}
+	MAX=x.maxCoeff();
 	for (int i = 0; i < x.size(); i++)
 	{
 		x[i] = eval(x[i]);
 		total+=x[i];
 	}
+	x=x/total;
 	return x;
 }
 

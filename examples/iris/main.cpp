@@ -60,7 +60,7 @@ int main()
 	FullyConnected fc1{ 5, sigmoid };
 	FullyConnected fc2{ 8, relu };
 	FullyConnected fc3{ 12, relu };
-	FullyConnected out{ 3, sigmoid };
+	FullyConnected out{ 3, sigmoid};
 
 	CELoss loss{};
 	Model model{ in | fc1 | fc2 | fc3 | out, loss };

@@ -10,10 +10,16 @@ class softmax
 	: public IActivationFunction
 {
  public:
+	softmax()
+	{   MAX=0.0;
+		total=0.0;}
 	double operator()(double x) override;
 	double eval(double x) override;
 	double derive(double y) override;
 	Eigen::VectorXd eval(Eigen::VectorXd x) override;
 	Eigen::VectorXd derive(Eigen::VectorXd y) override;
+ private:
+	double MAX;
+	double total;
 };
 }
