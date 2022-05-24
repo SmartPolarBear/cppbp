@@ -12,11 +12,6 @@ double cppbp::optimizer::CrossEntropyLoss::eval(Eigen::VectorXd value, Eigen::Ve
 	for (auto i = 0; i < value.size(); ++i)
 		loss += label[i] * std::log(value[i])+(1-label[i])*std::log(1-value[i]);
 	return -loss/value.size();
-
-/*    auto loss=0.0;
-	for (auto i = 0; i < value.size(); ++i)
-			loss += -label[i] * std::log(value[i]);
-	return loss;*/
 }
 
 double cppbp::optimizer::CrossEntropyLoss::operator()(Eigen::VectorXd value, Eigen::VectorXd label)
