@@ -39,3 +39,7 @@ Eigen::VectorXd cppbp::layer::softmax::derive(Eigen::VectorXd y)
 	}
 	return y;
 }
+uint32_t cppbp::layer::softmax::type_id()
+{
+	return 1;
+}
