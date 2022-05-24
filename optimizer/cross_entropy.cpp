@@ -28,10 +28,5 @@ double cppbp::optimizer::CELoss::operator()(Eigen::VectorXd value, Eigen::Vector
 
 Eigen::VectorXd cppbp::optimizer::CELoss::derive(Eigen::VectorXd value, Eigen::VectorXd label)
 {
-	Eigen::VectorXd d(value.size());
-	for(auto i=0;i<value.size();++i)
-	{
-		d[i]=(value[i]-label[i])/(value[i]*(1-value[i]));
-	}
-	return d;
+	return value-label;
 }
