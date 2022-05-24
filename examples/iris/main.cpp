@@ -27,6 +27,7 @@ using namespace cppbp::dataloader;
 
 using namespace std;
 
+
 int argmax(const Eigen::VectorXd& vals)
 {
 	int ret = 0;
@@ -39,6 +40,18 @@ int argmax(const Eigen::VectorXd& vals)
 	}
 	return ret;
 }
+int acc = 0;
+void res(Eigen::VectorXd& label,Eigen::VectorXd& ret)
+{
+	int a ,b;
+	a = argmax(label);
+	b = argmax(ret);
+	if(a == b){
+		acc++;
+	}
+	cout << fmt::format("Ground Truth:{}, Predict:{}", a, b) << endl;
+}
+
 
 int main()
 {
@@ -65,9 +78,9 @@ int main()
 	{
 		auto [data, label] = iris.get(i);
 		auto ret = model(data);
-		cout << fmt::format("Ground Truth:{}, Predict:{}", argmax(label), argmax(ret)) << endl;
+		res(label,ret);
 
 	}
-
+	cout << acc << endl;
 	return 0;
 }
