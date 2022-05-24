@@ -8,7 +8,8 @@ target_sources(cppbp
         INTERFACE layer.cpp
         INTERFACE activation_function.cpp
         INTERFACE relu.cpp
-        INTERFACE sigmoid.cpp
-        INTERFACE softmax.cpp)
+        INTERFACE dropout.cpp
+        INTERFACE batch_norm.cpp
+        INTERFACE sigmoid.cpp)
 
 
