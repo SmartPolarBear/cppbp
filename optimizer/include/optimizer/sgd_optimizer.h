@@ -22,7 +22,7 @@ class Sgd_optimizer
 	void step() override;
 	Eigen::MatrixXd optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads) override;
  private:
-	uint64_t step_{};
-	double lr_{};
+	uint64_t step_{}; //8 bytes int : The number of iterations
+	double lr_{}; // learning rate
 };
 }
