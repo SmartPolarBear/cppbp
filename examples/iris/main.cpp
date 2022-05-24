@@ -5,6 +5,7 @@
 #include <layer/fully_connected.h>
 #include <layer/input.h>
 #include <layer/relu.h>
+#include <layer/softmax.h>
 
 #include <model/model.h>
 
@@ -16,6 +17,7 @@
 
 #include <fmt/format.h>
 
+#include "optimizer/crossentropy.h"
 #include <iostream>
 #include <vector>
 
@@ -53,14 +55,14 @@ int main()
 
 	Sigmoid sigmoid{};
 	Relu relu{};
-
+	softmax softmax{};
 	Input in{ 4 };
 	FullyConnected fc1{ 5, sigmoid };
 	FullyConnected fc2{ 8, relu };
 	FullyConnected fc3{ 12, relu };
-	FullyConnected out{ 3, sigmoid };
+	FullyConnected out{ 3, sigmoid};
 
-	MSELoss loss{};
+	CrossEntropyLoss loss{};
 	Model model{ in | fc1 | fc2 | fc3 | out, loss };
 
 	std::cout << model.summary() << endl;
