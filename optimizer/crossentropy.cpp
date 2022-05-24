@@ -32,3 +32,7 @@ Eigen::VectorXd cppbp::optimizer::CrossEntropyELoss::derive(Eigen::VectorXd valu
 {
 	return value-label;
 }
+uint32_t cppbp::optimizer::CrossEntropyELoss::type_id()
+{
+	return 1;
+}

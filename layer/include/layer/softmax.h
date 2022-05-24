@@ -13,6 +13,7 @@ class softmax
 	softmax()
 	{   MAX=0.0;
 		total=0.0;}
+	uint32_t type_id() override;
 	double operator()(double x) override;
 	double eval(double x) override;
 	double derive(double y) override;
