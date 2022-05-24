@@ -17,7 +17,7 @@
 
 #include <fmt/format.h>
 
-#include "optimizer/cross_entropy.h"
+#include "optimizer/crossentropy.h"
 #include <iostream>
 #include <vector>
 
@@ -62,7 +62,7 @@ int main()
 	FullyConnected fc3{ 12, relu };
 	FullyConnected out{ 3, sigmoid};
 
-	CELoss loss{};
+	CrossEntropyELoss loss{};
 	Model model{ in | fc1 | fc2 | fc3 | out, loss };
 
 	std::cout << model.summary() << endl;

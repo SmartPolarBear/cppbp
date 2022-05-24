@@ -8,7 +8,7 @@
 
 namespace cppbp::optimizer
 {
-class CELoss
+class CrossEntropyELoss
 	: public ILossFunction
 {
  public:

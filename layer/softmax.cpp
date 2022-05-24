@@ -22,7 +22,6 @@ double cppbp::layer::softmax::derive(double y)
 
 Eigen::VectorXd cppbp::layer::softmax::eval(Eigen::VectorXd x)
 {
-	MAX=x.maxCoeff();
 	for (int i = 0; i < x.size(); i++)
 	{
 		x[i] = eval(x[i]);
