@@ -62,7 +62,7 @@ int main()
 	FullyConnected fc3{ 12, relu };
 	FullyConnected out{ 3, sigmoid};
 
-	CrossEntropyELoss loss{};
+	CrossEntropyLoss loss{};
 	Model model{ in | fc1 | fc2 | fc3 | out, loss };
 
 	std::cout << model.summary() << endl;
