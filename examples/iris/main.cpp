@@ -9,6 +9,7 @@
 
 #include <optimizer/fixed_step_optimizer.h>
 #include <optimizer/mse.h>
+#include <optimizer/sgd_optimizer.h>
 
 #include <dataloader/iris_dataset.h>
 #include <dataloader/dataloader.h>
@@ -55,16 +56,17 @@ int main()
 	std::cout << model.summary() << endl;
 
 	IrisDataset iris{ "data/iris.data" };
-	DataLoader dl{ iris, 16, true };
+	DataLoader dl{ iris, 16, false };
 
-	FixedStepOptimizer optimizer{ 0.2 };
+	//FixedStepOptimizer optimizer{ 0.2 };
+	Sgd_optimizer optimizer{0.3};
 	model.fit(dl, 1800, optimizer, false);
-
 	for (int i = 0; i < iris.size(); i++)
 	{
 		auto [data, label] = iris.get(i);
 		auto ret = model(data);
 		cout << fmt::format("Ground Truth:{}, Predict:{}", argmax(label), argmax(ret)) << endl;
+
 	}
 
 	return 0;
