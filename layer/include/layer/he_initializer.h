@@ -15,6 +15,10 @@ namespace cppbp::layer
 class HeInitializer
 	: public IWeightInitializer
 {
+public:
+    base::MatrixType initialize_weights(size_t w, size_t h, size_t ni, size_t no) override;
 
 };
+
+
 }// namespace cppbp::layer
