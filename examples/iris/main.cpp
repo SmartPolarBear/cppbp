@@ -54,11 +54,10 @@ int main()
 	//	FullyConnected out{ 3, sigmoid };
 
 	Sigmoid sigmoid{};
-	Relu relu{};
 	softmax softmax{};
 	Input in{4};
-	FullyConnected fc1{5, relu};
-	FullyConnected fc2{8, relu};
+	FullyConnected fc1{5, sigmoid};
+	FullyConnected fc2{8, sigmoid};
 	FullyConnected fc3{12, sigmoid};
 	FullyConnected out{3, softmax};
 
@@ -70,8 +69,8 @@ int main()
 	IrisDataset iris{"data/iris.data"};
 	DataLoader dl{iris, 16, true};
 
-	FixedStepOptimizer optimizer{0.2};
-	model.fit(dl, 1800, optimizer, true, 100);
+	FixedStepOptimizer optimizer{0.05};
+	model.fit(dl, 2000, optimizer, true, 100);
 
 	for (int i = 0; i < iris.size(); i++)
 	{

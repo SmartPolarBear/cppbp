@@ -38,7 +38,7 @@ void cppbp::layer::FullyConnected::backprop()
 	prev_activation << 1, prev()->get();
 
 	auto derives = act_func_->derive(activations_);
-	deltas_ = act_func_->derive(activations_) * errors_;
+	deltas_ = act_func_->derive(activations_).transpose() * errors_;
 
 	VectorXd errors = deltas_.transpose() * weights_.block(0, 1, weights_.rows(), weights_.cols() - 1);
 	prev()->set_errors(errors);
