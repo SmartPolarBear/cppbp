@@ -1,4 +1,4 @@
-//
+ //
 // Created by cleve on 5/11/2022.
 //
 
@@ -41,13 +41,19 @@ int argmax(const Eigen::VectorXd& vals)
 
 int main()
 {
-	Sigmoid sigmoid{};
+	// Sigmoid sigmoid{};
+	Tanh tanh{};
 
 	Input in{ 4 };
-	FullyConnected fc1{ 5, sigmoid };
-	FullyConnected fc2{ 8, sigmoid };
-	FullyConnected fc3{ 12, sigmoid };
-	FullyConnected out{ 3, sigmoid };
+	// FullyConnected fc1{ 5, sigmoid };
+	// FullyConnected fc2{ 8, sigmoid };
+	// FullyConnected fc3{ 12, sigmoid };
+	// FullyConnected out{ 3, sigmoid };
+
+	FullyConnected fc1{ 5, tanh };
+	FullyConnected fc2{ 8, tanh };
+	FullyConnected fc3{ 12, tanh };
+	FullyConnected out{ 3, tanh };
 
 	MSELoss loss{};
 	Model model{ in | fc1 | fc2 | fc3 | out, loss };

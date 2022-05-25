@@ -1,4 +1,4 @@
-#include <layer/sigmoid.h>
+/* #include <layer/sigmoid.h>
 
 #include <cmath>
 
@@ -34,3 +34,4 @@ Eigen::VectorXd cppbp::layer::Sigmoid::derive(Eigen::VectorXd y)
 	}
 	return y;
 }
+ */

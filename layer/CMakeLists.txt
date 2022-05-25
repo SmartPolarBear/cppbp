@@ -5,6 +5,7 @@ target_include_directories(cppbp INTERFACE include)
 target_sources(cppbp
         INTERFACE fully_connected.cpp
         INTERFACE input.cpp
-        INTERFACE sigmoid.cpp)
+        INTERFACE sigmoid.cpp
+        INTERFACE tanh.cpp)
 
 
