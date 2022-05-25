@@ -34,14 +34,16 @@ Eigen::VectorXd cppbp::layer::Relu::eval(Eigen::VectorXd x)
 	return x;
 }
 
-Eigen::VectorXd cppbp::layer::Relu::derive(Eigen::VectorXd y)
+Eigen::MatrixXd cppbp::layer::Relu::derive(Eigen::VectorXd y)
 {
+	Eigen::MatrixXd ret = Eigen::MatrixXd::Zero(y.size(), y.size());
 	for (int i = 0; i < y.size(); i++)
 	{
-		y[i] = derive(y[i]);
+		ret(i, i) = derive(y[i]);
 	}
-	return y;
+	return ret;
 }
+
 uint32_t cppbp::layer::Relu::type_id()
 {
 	return 2;

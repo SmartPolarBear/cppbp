@@ -21,7 +21,7 @@ class IActivationFunction
 	virtual double derive(double y) = 0;
 
 	virtual Eigen::VectorXd eval(Eigen::VectorXd x) = 0;
-	virtual Eigen::VectorXd derive(Eigen::VectorXd y) = 0;
+	virtual Eigen::MatrixXd derive(Eigen::VectorXd y) = 0;
 
 };
 

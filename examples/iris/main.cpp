@@ -12,8 +12,8 @@
 #include <optimizer/fixed_step_optimizer.h>
 #include <optimizer/mse.h>
 
-#include <dataloader/iris_dataset.h>
 #include <dataloader/dataloader.h>
+#include <dataloader/iris_dataset.h>
 
 #include <fmt/format.h>
 
@@ -44,34 +44,34 @@ int argmax(const Eigen::VectorXd& vals)
 
 int main()
 {
-//	Sigmoid sigmoid{};
-//
-//
-//	Input in{ 4 };
-//	FullyConnected fc1{ 5, sigmoid };
-//	FullyConnected fc2{ 8, sigmoid };
-//	FullyConnected fc3{ 12, sigmoid };
-//	FullyConnected out{ 3, sigmoid };
+	//	Sigmoid sigmoid{};
+	//
+	//
+	//	Input in{ 4 };
+	//	FullyConnected fc1{ 5, sigmoid };
+	//	FullyConnected fc2{ 8, sigmoid };
+	//	FullyConnected fc3{ 12, sigmoid };
+	//	FullyConnected out{ 3, sigmoid };
 
 	Sigmoid sigmoid{};
 	Relu relu{};
 	softmax softmax{};
-	Input in{ 4 };
-	FullyConnected fc1{ 5, relu };
-	FullyConnected fc2{ 8, relu };
-	FullyConnected fc3{ 12, sigmoid };
-	FullyConnected out{ 3, sigmoid};
+	Input in{4};
+	FullyConnected fc1{5, relu};
+	FullyConnected fc2{8, relu};
+	FullyConnected fc3{12, sigmoid};
+	FullyConnected out{3, softmax};
 
 	CrossEntropyLoss loss{};
-	Model model{ in | fc1 | fc2 | fc3 | out, loss };
+	Model model{in | fc1 | fc2 | fc3 | out, loss};
 
 	std::cout << model.summary() << endl;
 
-	IrisDataset iris{ "data/iris.data" };
-	DataLoader dl{ iris, 16, true };
+	IrisDataset iris{"data/iris.data"};
+	DataLoader dl{iris, 16, true};
 
-	FixedStepOptimizer optimizer{ 0.2 };
-	model.fit(dl, 1800, optimizer, false, 100);
+	FixedStepOptimizer optimizer{0.2};
+	model.fit(dl, 1800, optimizer, true, 100);
 
 	for (int i = 0; i < iris.size(); i++)
 	{

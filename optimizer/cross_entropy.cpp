@@ -18,7 +18,8 @@ double cppbp::optimizer::CrossEntropyLoss::operator()(Eigen::VectorXd value, Eig
 
 Eigen::VectorXd cppbp::optimizer::CrossEntropyLoss::derive(Eigen::VectorXd value, Eigen::VectorXd label)
 {
-	return -label.cwiseQuotient(value);
+	auto ret = -label.cwiseQuotient(value);
+	return ret;
 }
 
 uint32_t cppbp::optimizer::CrossEntropyLoss::type_id()

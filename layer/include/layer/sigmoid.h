@@ -17,7 +17,7 @@ class Sigmoid final
 	double eval(double x) override;
 	double derive(double y) override;
 	Eigen::VectorXd eval(Eigen::VectorXd x) override;
-	Eigen::VectorXd derive(Eigen::VectorXd y) override;
+	Eigen::MatrixXd derive(Eigen::VectorXd y) override;
 };
 
 }

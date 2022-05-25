@@ -37,7 +37,8 @@ void cppbp::layer::FullyConnected::backprop()
 	VectorXd prev_activation(1 + prev()->get().size());
 	prev_activation << 1, prev()->get();
 
-	deltas_ = errors_.cwiseProduct(act_func_->derive(activations_));
+	auto derives = act_func_->derive(activations_);
+	deltas_ = act_func_->derive(activations_) * errors_;
 
 	VectorXd errors = deltas_.transpose() * weights_.block(0, 1, weights_.rows(), weights_.cols() - 1);
 	prev()->set_errors(errors);
@@ -59,7 +60,7 @@ void cppbp::layer::FullyConnected::forward()
 
 void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 {
-	VectorXd aug{ 1 + prev()->get().size() };
+	VectorXd aug{1 + prev()->get().size()};
 	aug << 1, prev()->get();
 	weights_ = opt.optimize(weights_, deltas_ * aug.transpose());
 
@@ -88,7 +89,7 @@ std::string cppbp::layer::FullyConnected::summary() const
 	ss << fmt::format("Fully Connected [{} neurons]:{{\n", len_);
 	for (const auto& row : weights_.rowwise())
 	{
-		ss << fmt::format("[1 Bias, {} weights]=", len_) << row << "\n"; // TODO: custom formatter
+		ss << fmt::format("[1 Bias, {} weights]=", len_) << row << "\n";// TODO: custom formatter
 	}
 	ss << "}";
 
@@ -133,7 +134,7 @@ cppbp::layer::IActivationFunction& cppbp::layer::FullyConnected::activation_func
 
 void cppbp::layer::FullyConnected::reshape(size_t input)
 {
-	if (input == weights_.cols())return;
+	if (input == weights_.cols()) return;
 
 	weights_ = MatrixXd::Random(len_, input + 1);
 }

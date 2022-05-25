@@ -17,7 +17,7 @@ class Relu
 	double derive(double y) override;
 	Eigen::VectorXd eval(Eigen::VectorXd x) override;
 	uint32_t type_id() override;
-	Eigen::VectorXd derive(Eigen::VectorXd y) override;
+	Eigen::MatrixXd derive(Eigen::VectorXd y) override;
 };
 
 }
