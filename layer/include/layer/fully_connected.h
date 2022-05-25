@@ -4,12 +4,15 @@
 
 #pragma once
 
+#include <base/serializable.h>
+
 #include <layer/layer.h>
+
+#include <model/persist.h>
 
 #include <utils/counter.h>
 
 #include <Eigen/Eigen>
-
 
 #include <cstdint>
 #include <vector>
@@ -21,6 +24,12 @@ class FullyConnected
 	  public utils::Counter<FullyConnected>
 {
  public:
+	FullyConnected() = default;
+
+	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+
+	char* deserialize(char* data) override;
+
 	ILayer* next() override;
 
 	ILayer* prev() override;
@@ -37,7 +46,7 @@ class FullyConnected
 
 	ILayer& operator|(ILayer& next) override;
 
-	void set(Eigen::VectorXd vec) override ;
+	void set(Eigen::VectorXd vec) override;
 
 	[[nodiscard]] Eigen::VectorXd get() const override;
 
@@ -74,6 +83,15 @@ class FullyConnected
 
 	ILayer* next_{};
 	ILayer* prev_{};
+
+	// To work around the lifetime issues
+	std::shared_ptr<IActivationFunction> restored_act_func_{};
 };
 
 }
+
+template<>
+struct cppbp::model::persist::LayerTypeId<cppbp::layer::FullyConnected>
+{
+	static inline constexpr uint32_t value = 2;
+};

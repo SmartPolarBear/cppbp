@@ -1,6 +1,6 @@
 # cppbp
 
-A lightweight extensible library for constructing BP neural network in modern C++.
+A lightweight extensible library for constructing artificial neural network in modern C++.
 
 [![issues](https://img.shields.io/github/issues/SmartPolarBear/cppbp)](https://github.com/SmartPolarBear/cppbp/issues)
 [![forks](https://img.shields.io/github/forks/SmartPolarBear/cppbp)](https://github.com/SmartPolarBear/cppbp/fork)
@@ -15,12 +15,14 @@ This project is built with
 - MSVC 17.0 and above.
 - CMAKE, 3.20 and above.
 
-**Note: Any compiler which supports C++20 may be compatible. **
+**Note: Any compiler which supports C++20 may be compatible.**
 
 #### Third-party Libraries
 - [p-ranav/csv2](https://github.com/p-ranav/csv2)
 - [fmtlib/fmt](https://github.com/fmtlib/fmt)
 - [google/googletest](https://github.com/google/googletest)
+- [Microsoft/GSL](https://github.com/microsoft/GSL.git)
+- [libeigen/eigen](https://gitlab.com/libeigen/eigen.git)
 
 ## Usage
 

@@ -3,14 +3,16 @@
 //
 #pragma once
 
-#include <vector>
+#include <base/base.h>
+
 #include <utility>
+#include <vector>
 
 #include <Eigen/Eigen>
 
 namespace cppbp::dataloader
 {
-using DataPair = std::pair<Eigen::VectorXd, Eigen::VectorXd>;
+using DataPair = std::pair<base::VectorType, base::VectorType >;
 
 class IDataset
 {
@@ -19,6 +21,5 @@ class IDataset
 
 	virtual DataPair get(size_t index) const = 0;
 	virtual size_t size() const = 0;
-
 };
-}
+}// namespace cppbp::dataloader

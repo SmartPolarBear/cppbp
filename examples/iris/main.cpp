@@ -2,19 +2,25 @@
 // Created by cleve on 5/11/2022.
 //
 
+#include <layer/batch_norm.h>
+#include <layer/dropout.h>
 #include <layer/fully_connected.h>
 #include <layer/input.h>
+#include <layer/relu.h>
+#include <layer/softmax.h>
 
 #include <model/model.h>
 
 #include <optimizer/fixed_step_optimizer.h>
 #include <optimizer/mse.h>
+#include <optimizer/sgd_optimizer.h>
 
-#include <dataloader/iris_dataset.h>
 #include <dataloader/dataloader.h>
+#include <dataloader/iris_dataset.h>
 
 #include <fmt/format.h>
 
+#include "optimizer/cross_entropy.h"
 #include <iostream>
 #include <vector>
 
@@ -25,6 +31,7 @@ using namespace cppbp::optimizer;
 using namespace cppbp::dataloader;
 
 using namespace std;
+
 
 int argmax(const Eigen::VectorXd& vals)
 {
@@ -38,40 +45,50 @@ int argmax(const Eigen::VectorXd& vals)
 	}
 	return ret;
 }
+int acc = 0;
+void res(Eigen::VectorXd& label,Eigen::VectorXd& ret)
+{
+	int a ,b;
+	a = argmax(label);
+	b = argmax(ret);
+	if(a == b){
+		acc++;
+	}
+	cout << fmt::format("Ground Truth:{}, Predict:{}", a, b) << endl;
+}
+
 
 int main()
 {
-	// Sigmoid sigmoid{};
-	Tanh tanh{};
+	Sigmoid sigmoid{};
+	Relu relu{};
+	softmax softmax{};
 
-	Input in{ 4 };
-	// FullyConnected fc1{ 5, sigmoid };
-	// FullyConnected fc2{ 8, sigmoid };
-	// FullyConnected fc3{ 12, sigmoid };
-	// FullyConnected out{ 3, sigmoid };
+	Input in{4};
+	FullyConnected fc1{5, relu};
+	FullyConnected fc2{8, sigmoid};
+	DropOut drop1{0.05};
+	FullyConnected fc3{12, sigmoid};
+	FullyConnected out{3, softmax};
 
-	FullyConnected fc1{ 5, tanh };
-	FullyConnected fc2{ 8, tanh };
-	FullyConnected fc3{ 12, tanh };
-	FullyConnected out{ 3, tanh };
-
-	MSELoss loss{};
-	Model model{ in | fc1 | fc2 | fc3 | out, loss };
+	CrossEntropyLoss loss{};
+	Model model{in | fc1 | fc2 | drop1 | fc3 | out, loss};
 
 	std::cout << model.summary() << endl;
 
-	IrisDataset iris{ "data/iris.data" };
-	DataLoader dl{ iris, 16, true };
+	IrisDataset iris{"data/iris.data", true};
+	DataLoader dl{iris, 16, true};
 
-	FixedStepOptimizer optimizer{ 0.2 };
-	model.fit(dl, 1800, optimizer, false);
+	SGDOptimizer optimizer{0.1};
+	model.fit(dl, 2000, optimizer, true, 100);
 
 	for (int i = 0; i < iris.size(); i++)
 	{
 		auto [data, label] = iris.get(i);
 		auto ret = model(data);
-		cout << fmt::format("Ground Truth:{}, Predict:{}", argmax(label), argmax(ret)) << endl;
-	}
+		res(label,ret);
 
+	}
+	cout << acc << endl;
 	return 0;
 }

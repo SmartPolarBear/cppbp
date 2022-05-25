@@ -26,11 +26,17 @@ Eigen::VectorXd cppbp::layer::Sigmoid::eval(Eigen::VectorXd x)
 	return x;
 }
 
-Eigen::VectorXd cppbp::layer::Sigmoid::derive(Eigen::VectorXd y)
+Eigen::MatrixXd cppbp::layer::Sigmoid::derive(Eigen::VectorXd y)
 {
+	Eigen::MatrixXd ret = Eigen::MatrixXd::Zero(y.size(), y.size());
 	for (int i = 0; i < y.size(); i++)
 	{
-		y[i] = derive(y[i]);
+		ret(i, i) = derive(y[i]);
 	}
-	return y;
+	return ret;
+}
+
+uint32_t cppbp::layer::Sigmoid::type_id()
+{
+	return 1;
 }

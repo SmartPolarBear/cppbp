@@ -6,12 +6,18 @@
 
 #include <layer/layer.h>
 
+#include <base/serializable.h>
+
 #include <optimizer/optimizer.h>
 #include <optimizer/loss.h>
+
+#include <model/persist.h>
+#include <model/callback.h>
 
 #include <dataloader/dataloader.h>
 
 #include <vector>
+#include <optional>
 
 namespace cppbp::model
 {
@@ -20,6 +26,7 @@ class Model
 	  public base::IBackProp,
 	  public base::ISummary,
 	  public base::INamable,
+	  public base::ISerializable,
 	  public optimizer::IOptimizable
 {
  public:
@@ -33,7 +40,9 @@ class Model
 	void fit(cppbp::dataloader::DataLoader& dl,
 		size_t epoch,
 		cppbp::optimizer::IOptimizer& opt,
-		bool verbose);
+		bool verbose,
+		size_t callback_skip_epoch = 100,
+		std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks = std::nullopt);
 
 	[[nodiscard]] std::string name() const override;
 
@@ -41,7 +50,17 @@ class Model
 
 	void optimize(optimizer::IOptimizer& iOptimizer) override;
 
+	void save(const std::string& filename);
+
+	static inline std::optional<Model> from_file(const std::string& filename);
+
+	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+
+	char* deserialize(char* data) override;
+
  private:
+	Model() = default;
+
 	void set(std::vector<double> values);
 
 	void forward() override;
@@ -51,5 +70,10 @@ class Model
 	layer::ILayer* input_{}, * output_{};
 	std::string name_{ "Model" };
 	optimizer::ILossFunction* loss_{};
+
+	// To work around lifetime issues
+	std::shared_ptr<optimizer::ILossFunction> restored_loss_{};
+	std::vector<std::shared_ptr<layer::ILayer>> restored_layers_{};
+
 };
 }

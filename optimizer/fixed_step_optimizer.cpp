@@ -3,8 +3,6 @@
 //
 
 #include <optimizer/fixed_step_optimizer.h>
-
-#include <algorithm>
 #include "Eigen/Core"
 
 using namespace std;
@@ -21,6 +19,6 @@ void cppbp::optimizer::FixedStepOptimizer::step()
 
 Eigen::MatrixXd cppbp::optimizer::FixedStepOptimizer::optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads)
 {
-	return prev + lr_ * grads;
+	return prev - lr_ * grads;
 }
 
