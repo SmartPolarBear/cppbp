@@ -1,14 +1,17 @@
 //
 // Created by cleve on 5/11/2022.
 
+#include <base/base.h>
 #include <optimizer/sgd_optimizer.h>
-#include "Eigen/Core"
+
+#include <Eigen/Core>
 
 using namespace std;
 
-cppbp::optimizer::SGDOptimizer::SGDOptimizer(double lr,double mometum,double weight_decay,double dampening,bool nesterov,bool maximize)
-:
-	  lr_(lr),
+using namespace cppbp::base;
+
+cppbp::optimizer::SGDOptimizer::SGDOptimizer(double lr, double mometum, double weight_decay, double dampening, bool nesterov, bool maximize)
+	: lr_(lr),
 	  momentum_(mometum),
 	  weight_decay_(weight_decay),
 	  dampening_(dampening),
@@ -26,32 +29,45 @@ void cppbp::optimizer::SGDOptimizer::step()
  * element size : dynamic
  * element type : double
  * */
-Eigen::MatrixXd cppbp::optimizer::SGDOptimizer::optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads)
+Eigen::MatrixXd cppbp::optimizer::SGDOptimizer::optimize(Eigen::MatrixXd params, Eigen::MatrixXd grads)
 {
-	for (int i = 0; i < prev.rows(); ++i)
+	if (std::fabs(weight_decay_) > EPS)
 	{
-		auto b = grads(i);
-		if(weight_decay_)
-			grads(i) += weight_decay_*prev(i);
-		if(momentum_){
-			if(i>0)
-				b = momentum_ * b + (1 - dampening_)*grads(i);
-			else
-				b = grads(i);
-
-			if(nesterov_)
-				grads(i) = grads(i) + momentum_*b;
-			else
-				grads(i) = b;
-		}
-
-		if(maximize_)
+		if (step_ > 0)
 		{
-			prev(i) += weight_decay_*grads(i);
+			grads += weight_decay_ * params;
 		}
-		else
-			prev(i) -= weight_decay_*grads(i);
 	}
 
-	return prev ;
+	auto b = grads;
+	if (std::fabs(momentum_) > EPS)
+	{
+		if (step_ > 0)
+		{
+			b = momentum_ * prev_b_ + (1 - dampening_) * grads;
+		}
+
+		if (nesterov_ && step_ > 0)
+		{
+			grads = prev_grads_ + momentum_ * b;
+		}
+		else
+		{
+			grads = b;
+		}
+	}
+
+	if (maximize_)
+	{
+		params += lr_ * grads;
+	}
+	else
+	{
+		params -= lr_ * grads;
+	}
+
+	prev_b_ = b;
+	prev_grads_ = grads;
+
+	return params;
 }
