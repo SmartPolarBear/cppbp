@@ -10,6 +10,7 @@ target_sources(cppbp
         INTERFACE relu.cpp
         INTERFACE dropout.cpp
         INTERFACE batch_norm.cpp
-        INTERFACE sigmoid.cpp)
+        INTERFACE sigmoid.cpp
+        INTERFACE softmax.cpp)
 
 

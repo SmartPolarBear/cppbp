@@ -6,6 +6,6 @@ target_sources(cppbp
         INTERFACE fixed_step_optimizer.cpp
         INTERFACE sgd_optimizer.cpp
         INTERFACE mse.cpp
-        INTERFACE crossentropy.cpp)
+        INTERFACE cross_entropy.cpp)
 
 

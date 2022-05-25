@@ -17,7 +17,7 @@
 
 #include <fmt/format.h>
 
-#include "optimizer/crossentropy.h"
+#include "optimizer/cross_entropy.h"
 #include <iostream>
 #include <vector>
 
@@ -57,9 +57,9 @@ int main()
 	Relu relu{};
 	softmax softmax{};
 	Input in{ 4 };
-	FullyConnected fc1{ 5, sigmoid };
+	FullyConnected fc1{ 5, relu };
 	FullyConnected fc2{ 8, relu };
-	FullyConnected fc3{ 12, relu };
+	FullyConnected fc3{ 12, sigmoid };
 	FullyConnected out{ 3, sigmoid};
 
 	CrossEntropyLoss loss{};
@@ -71,7 +71,7 @@ int main()
 	DataLoader dl{ iris, 16, true };
 
 	FixedStepOptimizer optimizer{ 0.2 };
-	model.fit(dl, 1800, optimizer, true, 100);
+	model.fit(dl, 1800, optimizer, false, 100);
 
 	for (int i = 0; i < iris.size(); i++)
 	{
