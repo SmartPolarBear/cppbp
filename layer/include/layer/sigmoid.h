@@ -20,4 +20,4 @@ class Sigmoid final
 	Eigen::MatrixXd derive(Eigen::VectorXd y) override;
 };
 
-}
+}// namespace cppbp::layer

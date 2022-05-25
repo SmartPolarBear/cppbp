@@ -20,4 +20,4 @@ class Relu
 	Eigen::MatrixXd derive(Eigen::VectorXd y) override;
 };
 
-}
+}// namespace cppbp::layer
