@@ -8,6 +8,7 @@ target_sources(cppbp
         INTERFACE layer.cpp
         INTERFACE activation_function.cpp
         INTERFACE relu.cpp
+        INTERFACE tanh.cpp
         INTERFACE dropout.cpp
         INTERFACE batch_norm.cpp
         INTERFACE sigmoid.cpp
