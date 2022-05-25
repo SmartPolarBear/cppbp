@@ -9,6 +9,7 @@
       <file path="$PROJECT_DIR$/libs/csv2" />
       <file path="$PROJECT_DIR$/libs/eigen" />
       <file path="$PROJECT_DIR$/libs/fmt" />
+      <file path="$PROJECT_DIR$/libs/gsl" />
     </excludeRoots>
   </component>
 </project>

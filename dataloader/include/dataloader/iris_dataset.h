@@ -18,7 +18,7 @@ class IrisDataset
 	: public IDataset
 {
  public:
-	explicit IrisDataset(std::string pathname);
+	explicit IrisDataset(std::string pathname,bool regularize);
 
 	DataPair get(size_t index) const override;
 	size_t size() const override;
@@ -33,6 +33,7 @@ class IrisDataset
 
 	std::string path_{};
 	std::vector<DataPair> data_{};
+	bool regularize_{};
 };
 
 }

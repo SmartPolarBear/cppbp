@@ -6,6 +6,8 @@
 
 #include <layer/activation_function.h>
 
+#include <base/type_id.h>
+
 #include <Eigen/Eigen>
 
 #include <vector>
@@ -13,6 +15,7 @@
 namespace cppbp::optimizer
 {
 class ILossFunction
+	: public base::ITypeId
 {
  public:
 	virtual double operator()(Eigen::VectorXd value, Eigen::VectorXd label) = 0;

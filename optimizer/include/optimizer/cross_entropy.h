@@ -1,15 +1,14 @@
 //
-// Created by cleve on 5/12/2022.
+// Created by 九黎千明 on 2022/5/23.
 //
 
 #pragma once
 
 #include <optimizer/loss.h>
 
-
 namespace cppbp::optimizer
 {
-class MSELoss
+class CrossEntropyLoss
 	: public ILossFunction
 {
  public:
@@ -17,8 +16,5 @@ class MSELoss
 	double eval(Eigen::VectorXd value, Eigen::VectorXd label) override;
 	Eigen::VectorXd derive(Eigen::VectorXd value, Eigen::VectorXd label) override;
 	uint32_t type_id() override;
-
 };
-
-
 }

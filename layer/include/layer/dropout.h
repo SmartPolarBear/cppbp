@@ -1,5 +1,5 @@
 //
-// Created by cleve on 5/18/2022.
+// Created by cleve on 5/24/2022.
 //
 
 #pragma once
@@ -7,30 +7,35 @@
 #include <base/serializable.h>
 
 #include <layer/layer.h>
-#include <layer/sigmoid.h>
 
 #include <model/persist.h>
 
+#include <utils/counter.h>
+
 #include <Eigen/Eigen>
+
+#include <layer/sigmoid.h>
 
 #include <cstdint>
 #include <vector>
 
 namespace cppbp::layer
 {
-class Input
-	: public ILayer
+class DropOut
+	: public ILayer,
+	  public utils::Counter<DropOut>
 {
  public:
-	Input() = default;
-	explicit Input(size_t size);
+	explicit DropOut(double drop_prob = 0.1);
 
 	void backprop() override;
 	void forward() override;
-	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
-	char* deserialize(char* data) override;
 	ILayer* next() override;
 	ILayer* prev() override;
+	void set_prev(ILayer* prev) override;
+	void set_next(ILayer* next) override;
+	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+	char* deserialize(char* data) override;
 	std::string name() const override;
 	std::string summary() const override;
 	ILayer& connect(ILayer& next) override;
@@ -42,23 +47,19 @@ class Input
 	ILayer& operator|(ILayer& next) override;
 	void reshape(size_t input) override;
 	void optimize(optimizer::IOptimizer& iOptimizer) override;
-	void set_prev(ILayer* prev) override;
-	void set_next(ILayer* next) override;
 
  private:
-	size_t len_;
-	Eigen::VectorXd values_;
+	uint64_t id_{};
+	size_t input_{};
 
 	ILayer* next_{};
+	ILayer* prev_{};
+
+	double drop_prob_{};
+
+	Eigen::VectorXd errors_;
+	Eigen::VectorXd values_;
 
 	Sigmoid placeholder{};
-
 };
-
-}
-
-template<>
-struct cppbp::model::persist::LayerTypeId<cppbp::layer::Input>
-{
-	static inline constexpr uint32_t value = 1;
-};
+}// namespace cppbp::layer

@@ -5,6 +5,12 @@ target_include_directories(cppbp INTERFACE include)
 target_sources(cppbp
         INTERFACE fully_connected.cpp
         INTERFACE input.cpp
-        INTERFACE sigmoid.cpp)
+        INTERFACE layer.cpp
+        INTERFACE activation_function.cpp
+        INTERFACE relu.cpp
+        INTERFACE dropout.cpp
+        INTERFACE batch_norm.cpp
+        INTERFACE sigmoid.cpp
+        INTERFACE softmax.cpp)
 
 

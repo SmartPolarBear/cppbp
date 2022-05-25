@@ -19,6 +19,6 @@ void cppbp::optimizer::FixedStepOptimizer::step()
 
 Eigen::MatrixXd cppbp::optimizer::FixedStepOptimizer::optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads)
 {
-	return prev + lr_ * grads;
+	return prev - lr_ * grads;
 }
 

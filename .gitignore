@@ -78,3 +78,10 @@ fabric.properties
 
 # dataset for example
 examples/iris/data/*
+
+# vscode default cmake
+build/*
+
+# vs and vscode
+.vs/
+.vscode/
