@@ -11,6 +11,9 @@ target_sources(cppbp
         INTERFACE dropout.cpp
         INTERFACE batch_norm.cpp
         INTERFACE sigmoid.cpp
-        INTERFACE softmax.cpp)
+        INTERFACE softmax.cpp
+        INTERFACE xavier_intializer.cpp
+        INTERFACE he_initializer.cpp
+        INTERFACE random_initializer.cpp)
 
 
