@@ -44,21 +44,14 @@ int argmax(const Eigen::VectorXd& vals)
 
 int main()
 {
-	//	Sigmoid sigmoid{};
-	//
-	//
-	//	Input in{ 4 };
-	//	FullyConnected fc1{ 5, sigmoid };
-	//	FullyConnected fc2{ 8, sigmoid };
-	//	FullyConnected fc3{ 12, sigmoid };
-	//	FullyConnected out{ 3, sigmoid };
-
 	Sigmoid sigmoid{};
+	Relu relu{};
 	softmax softmax{};
+
 	Input in{4};
-	FullyConnected fc1{5, sigmoid};
-	FullyConnected fc2{8, sigmoid};
-	FullyConnected fc3{12, sigmoid};
+	FullyConnected fc1{5, relu};
+	FullyConnected fc2{8, relu};
+	FullyConnected fc3{12, relu};
 	FullyConnected out{3, softmax};
 
 	CrossEntropyLoss loss{};
@@ -66,10 +59,10 @@ int main()
 
 	std::cout << model.summary() << endl;
 
-	IrisDataset iris{"data/iris.data"};
+	IrisDataset iris{"data/iris.data", true};
 	DataLoader dl{iris, 16, true};
 
-	FixedStepOptimizer optimizer{0.05};
+	FixedStepOptimizer optimizer{0.1};
 	model.fit(dl, 2000, optimizer, true, 100);
 
 	for (int i = 0; i < iris.size(); i++)

@@ -12,8 +12,8 @@ using namespace std;
 
 using namespace Eigen;
 
-cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
-	: IDataset(), path_(std::move(pathname))
+cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname, bool regularize)
+	: IDataset(), path_(std::move(pathname)), regularize_(regularize)
 {
 	csv2::Reader<csv2::delimiter<','>,
 				 csv2::quote_character<'"'>,
@@ -55,15 +55,18 @@ cppbp::dataloader::IrisDataset::IrisDataset(std::string pathname)
 		}
 	}
 
-	sum /= data_.size();
-	squared /= data_.size();
-
-	VectorXd variance((squared - sum.cwiseProduct(sum)).array().sqrt());
-
-	for (auto& d : data_)
+	if (regularize_)
 	{
-		d.first -= sum;
-		d.first = d.first.cwiseQuotient(variance);
+		sum /= data_.size();
+		squared /= data_.size();
+
+		VectorXd variance((squared - sum.cwiseProduct(sum)).array().sqrt());
+
+		for (auto& d : data_)
+		{
+			d.first -= sum;
+			d.first = d.first.cwiseQuotient(variance);
+		}
 	}
 }
 

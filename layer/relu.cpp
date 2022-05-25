@@ -18,7 +18,7 @@ double cppbp::layer::Relu::eval(double x)
 
 double cppbp::layer::Relu::derive(double y)
 {
-	if (y >= 0)
+	if (y > 0)
 	{
 		return 1;
 	}
