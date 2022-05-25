@@ -6,13 +6,17 @@
 
 #include <model/persist.h>
 
+#include <iostream>
 #include <sstream>
 
 #include <fmt/format.h>
 
+#include <gsl/assert>
+
 using namespace cppbp::model::persist;
 
 using namespace std;
+using namespace gsl;
 
 using namespace Eigen;
 
@@ -41,10 +45,10 @@ void cppbp::layer::FullyConnected::backprop()
 	deltas_ = act_func_->derive(activations_).transpose() * errors_;
 
 	VectorXd errors = deltas_.transpose() * weights_.block(0, 1, weights_.rows(), weights_.cols() - 1);
-	prev()->set_errors(errors);
 
 	if (prev())
 	{
+		prev()->set_errors(errors);
 		prev()->backprop();
 	}
 }
@@ -60,6 +64,8 @@ void cppbp::layer::FullyConnected::forward()
 
 void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 {
+	Expects(!weights_.hasNaN());
+
 	VectorXd aug{1 + prev()->get().size()};
 	aug << 1, prev()->get();
 	weights_ = opt.optimize(weights_, deltas_ * aug.transpose());
@@ -68,14 +74,20 @@ void cppbp::layer::FullyConnected::optimize(cppbp::optimizer::IOptimizer& opt)
 	{
 		next_->optimize(opt);
 	}
+
+	Ensures(!weights_.hasNaN());
 }
 
 void cppbp::layer::FullyConnected::set(VectorXd vec)
 {
+	Expects(!vec.hasNaN());
+
 	input_ = vec;
 	VectorXd aug(vec.size() + 1);
 	aug << 1, vec;
 	activations_ = act_func_->eval(weights_ * aug);
+
+	Ensures(!activations_.hasNaN());
 }
 
 void cppbp::layer::FullyConnected::set_deltas(Eigen::VectorXd dlts)

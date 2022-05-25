@@ -7,7 +7,11 @@
 #include <algorithm>
 #include <iostream>
 
+#include <gsl/assert>
+
 using namespace std;
+using namespace gsl;
+
 using namespace Eigen;
 
 double cppbp::layer::softmax::operator()(double x)
@@ -27,8 +31,13 @@ double cppbp::layer::softmax::derive(double y)
 
 Eigen::VectorXd cppbp::layer::softmax::eval(Eigen::VectorXd x)
 {
+	Expects(!x.hasNaN());
+
 	auto exps = x.array().exp();
 	Eigen::VectorXd ret(exps.cwiseQuotient(exps.sum() * Eigen::ArrayXd::Ones(exps.size())));
+
+	Ensures(!ret.hasNaN());
+
 	return ret;
 }
 
