@@ -3,6 +3,3 @@
 //
 #include <layer/batch_norm.h>
 
-cppbp::layer::BatchNorm::BatchNorm(size_t len, double drop_prob)
-{
-}

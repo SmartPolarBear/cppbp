@@ -23,9 +23,6 @@ class BatchNorm
 	: public ILayer,
 	  public utils::Counter<BatchNorm>
 {
- public:
-	BatchNorm() = default;
 
-	explicit BatchNorm(size_t len, double drop_prob = 0.1);
 };
 }// namespace cppbp::layer
