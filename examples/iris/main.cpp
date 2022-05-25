@@ -13,6 +13,7 @@
 
 #include <optimizer/fixed_step_optimizer.h>
 #include <optimizer/mse.h>
+#include <optimizer/sgd_optimizer.h>
 
 #include <dataloader/dataloader.h>
 #include <dataloader/iris_dataset.h>
@@ -31,6 +32,7 @@ using namespace cppbp::dataloader;
 
 using namespace std;
 
+
 int argmax(const Eigen::VectorXd& vals)
 {
 	int ret = 0;
@@ -43,6 +45,18 @@ int argmax(const Eigen::VectorXd& vals)
 	}
 	return ret;
 }
+int acc = 0;
+void res(Eigen::VectorXd& label,Eigen::VectorXd& ret)
+{
+	int a ,b;
+	a = argmax(label);
+	b = argmax(ret);
+	if(a == b){
+		acc++;
+	}
+	cout << fmt::format("Ground Truth:{}, Predict:{}", a, b) << endl;
+}
+
 
 int main()
 {
@@ -65,15 +79,16 @@ int main()
 	IrisDataset iris{"data/iris.data", true};
 	DataLoader dl{iris, 16, true};
 
-	FixedStepOptimizer optimizer{0.1};
+	SGDOptimizer optimizer{0.1};
 	model.fit(dl, 2000, optimizer, true, 100);
 
 	for (int i = 0; i < iris.size(); i++)
 	{
 		auto [data, label] = iris.get(i);
 		auto ret = model(data);
-		cout << fmt::format("Ground Truth:{}, Predict:{}", argmax(label), argmax(ret)) << endl;
-	}
+		res(label,ret);
 
+	}
+	cout << acc << endl;
 	return 0;
 }
