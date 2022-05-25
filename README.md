@@ -1,6 +1,6 @@
 # cppbp
 
-A lightweight extensible library for constructing BP neural network in modern C++.
+A lightweight extensible library for constructing artificial neural network in modern C++.
 
 [![issues](https://img.shields.io/github/issues/SmartPolarBear/cppbp)](https://github.com/SmartPolarBear/cppbp/issues)
 [![forks](https://img.shields.io/github/forks/SmartPolarBear/cppbp)](https://github.com/SmartPolarBear/cppbp/fork)
