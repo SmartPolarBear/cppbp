@@ -17,7 +17,7 @@ class SGDOptimizer
 	: public IOptimizer
 {
  public:
-	explicit SGDOptimizer(double lr, double mometum = 0, double weight_decay = 0, double dampening = 0, bool nesterov = 0, bool maximize = false);
+	explicit SGDOptimizer(double lr, double momentum = 0, double weight_decay = 0, double dampening = 0, bool nesterov = 0, bool maximize = false);
 
 	void step() override;
 	Eigen::MatrixXd optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads) override;

@@ -10,13 +10,14 @@ using namespace std;
 
 using namespace cppbp::base;
 
-cppbp::optimizer::SGDOptimizer::SGDOptimizer(double lr, double mometum, double weight_decay, double dampening, bool nesterov, bool maximize)
+cppbp::optimizer::SGDOptimizer::SGDOptimizer(double lr, double momentum, double weight_decay, double dampening, bool nesterov, bool maximize)
 	: lr_(lr),
-	  momentum_(mometum),
+	  momentum_(momentum),
 	  weight_decay_(weight_decay),
 	  dampening_(dampening),
 	  nesterov_(nesterov),
-	  maximize_(maximize)
+	  maximize_(maximize),
+	  step_(0)
 {
 }
 
