@@ -25,11 +25,7 @@ void cppbp::optimizer::SGDOptimizer::step()
 {
 	step_++;
 }
-/*
- * Eigen::MatrixXd
- * element size : dynamic
- * element type : double
- * */
+
 Eigen::MatrixXd cppbp::optimizer::SGDOptimizer::optimize(Eigen::MatrixXd params, Eigen::MatrixXd grads)
 {
 	if (std::fabs(weight_decay_) > EPS)
