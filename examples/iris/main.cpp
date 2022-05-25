@@ -72,7 +72,7 @@ int main()
 	DataLoader dl{ iris, 16, false };
 
 	//FixedStepOptimizer optimizer{ 0.2 };
-	Sgd_optimizer optimizer{0.3};
+	SGDOptimizer optimizer{0.1,0,1,0,1,1};
 	model.fit(dl, 1800, optimizer, false);
 	for (int i = 0; i < iris.size(); i++)
 	{

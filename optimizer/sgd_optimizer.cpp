@@ -6,12 +6,18 @@
 
 using namespace std;
 
-cppbp::optimizer::Sgd_optimizer::Sgd_optimizer(double lr)
-:lr_(lr)
+cppbp::optimizer::SGDOptimizer::SGDOptimizer(double lr,double mometum,double weight_decay,double dampening,bool nesterov,bool maximize)
+:
+	  lr_(lr),
+	  momentum_(mometum),
+	  weight_decay_(weight_decay),
+	  dampening_(dampening),
+	  nesterov_(nesterov),
+	  maximize_(maximize)
 {
 }
 
-void cppbp::optimizer::Sgd_optimizer::step()
+void cppbp::optimizer::SGDOptimizer::step()
 {
 	step_++;
 }
@@ -20,23 +26,32 @@ void cppbp::optimizer::Sgd_optimizer::step()
  * element size : dynamic
  * element type : double
  * */
-Eigen::MatrixXd cppbp::optimizer::Sgd_optimizer::optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads)
-{	//
-	Eigen::VectorXd g = Eigen::VectorXd::Ones(prev.rows());
-
-	for (int i = 0; i < prev.rows()/10; ++i)
+Eigen::MatrixXd cppbp::optimizer::SGDOptimizer::optimize(Eigen::MatrixXd prev, Eigen::MatrixXd grads)
+{
+	for (int i = 0; i < prev.rows(); ++i)
 	{
-		int k = rand()%prev.rows()+0;
-		g[k] = 1;
-	}
+		auto b = grads(i);
+		if(weight_decay_)
+			grads(i) += weight_decay_*prev(i);
+		if(momentum_){
+			if(i>0)
+				b = momentum_ * b + (1 - dampening_)*grads(i);
+			else
+				b = grads(i);
 
-	for (int i = 0; i < g.size(); ++i)
-	{
-		if(g(i) == 0)
-		{
-			for(int j = 0;j < prev.cols();j++)
-				grads(i,j) = 0;
+			if(nesterov_)
+				grads(i) = grads(i) + momentum_*b;
+			else
+				grads(i) = b;
 		}
+
+		if(maximize_)
+		{
+			prev(i) += weight_decay_*grads(i);
+		}
+		else
+			prev(i) -= weight_decay_*grads(i);
 	}
-	return prev + lr_ * grads;
+
+	return prev ;
 }
