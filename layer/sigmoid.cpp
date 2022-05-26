@@ -1,6 +1,10 @@
 #include <layer/sigmoid.h>
+#include <layer/xavier_initializer.h>
+#include <layer/random_initializer.h>
 
 #include <cmath>
+
+using namespace cppbp::layer;
 
 double cppbp::layer::Sigmoid::operator()(double x)
 {
@@ -39,4 +43,9 @@ Eigen::MatrixXd cppbp::layer::Sigmoid::derive(Eigen::VectorXd y)
 uint32_t cppbp::layer::Sigmoid::type_id()
 {
 	return 1;
+}
+
+std::shared_ptr<IWeightInitializer> cppbp::layer::Sigmoid::default_initializer()
+{
+    return IWeightInitializer::make<XavierInitializer>();
 }

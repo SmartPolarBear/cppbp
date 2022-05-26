@@ -3,6 +3,8 @@
 //
 
 #include <layer/softmax.h>
+#include <layer/xavier_initializer.h>
+#include <layer/random_initializer.h>
 
 #include <algorithm>
 #include <iostream>
@@ -11,6 +13,8 @@
 
 using namespace std;
 using namespace gsl;
+
+using namespace cppbp::layer;
 
 using namespace Eigen;
 
@@ -63,4 +67,9 @@ Eigen::MatrixXd cppbp::layer::softmax::derive(Eigen::VectorXd y)
 uint32_t cppbp::layer::softmax::type_id()
 {
     return 1;
+}
+
+shared_ptr<IWeightInitializer> cppbp::layer::softmax::default_initializer()
+{
+    return IWeightInitializer::make<RandomInitializer>();
 }
