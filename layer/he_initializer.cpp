@@ -7,7 +7,7 @@
 using namespace cppbp::layer;
 using namespace cppbp::base;
 
-MatrixType HeInitializer::initialize_weights(size_t w, size_t h, size_t ni, size_t no)
+MatrixType HeInitializer::initialize_weights(size_t rows, size_t cols, size_t ni, size_t no)
 {
     std::random_device r;
     std::mt19937 gen{r()};
@@ -16,5 +16,5 @@ MatrixType HeInitializer::initialize_weights(size_t w, size_t h, size_t ni, size
     {
         return dist(gen);
     };
-    return cppbp::base::MatrixType::NullaryExpr(w, h, normal_sample);
+    return cppbp::base::MatrixType::NullaryExpr(rows, cols, normal_sample);
 }

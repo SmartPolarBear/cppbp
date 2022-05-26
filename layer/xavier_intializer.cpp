@@ -10,7 +10,7 @@ using namespace std;
 using namespace cppbp::layer;
 using namespace cppbp::base;
 
-cppbp::base::MatrixType cppbp::layer::XavierInitializer::initialize_weights(size_t w, size_t h, size_t ni, size_t no)
+cppbp::base::MatrixType cppbp::layer::XavierInitializer::initialize_weights(size_t rows, size_t cols, size_t ni, size_t no)
 {
     const double limit = std::sqrt(6.0) / std::sqrt(ni + no);
 
@@ -21,5 +21,5 @@ cppbp::base::MatrixType cppbp::layer::XavierInitializer::initialize_weights(size
     {
         return dist(gen);
     };
-    return cppbp::base::MatrixType::NullaryExpr(w, h, uniform_sample);
+    return cppbp::base::MatrixType::NullaryExpr(rows, cols, uniform_sample);
 }
