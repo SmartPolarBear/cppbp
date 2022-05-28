@@ -11,6 +11,7 @@ target_sources(cppbp
         INTERFACE tanh.cpp
         INTERFACE dropout.cpp
         INTERFACE batch_norm.cpp
+        INTERFACE layer_norm.cpp
         INTERFACE sigmoid.cpp
         INTERFACE softmax.cpp
         INTERFACE xavier_intializer.cpp
