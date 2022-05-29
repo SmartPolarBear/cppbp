@@ -10,3 +10,9 @@
 [submodule "libs/gsl"]
 	path = libs/gsl
 	url = https://github.com/microsoft/GSL.git
+[submodule "libs/xtenstor"]
+	path = libs/xtenstor
+	url = https://github.com/xtensor-stack/xtensor.git
+[submodule "libs/xtl"]
+	path = libs/xtl
+	url = https://github.com/xtensor-stack/xtl.git

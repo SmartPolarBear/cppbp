@@ -11,7 +11,9 @@ target_link_libraries(cppbp
         INTERFACE Eigen3::Eigen
         INTERFACE csv2::csv2
         INTERFACE fmt::fmt
-        INTERFACE GSL)
+        INTERFACE GSL
+        INTERFACE xtl
+        INTERFACE xtensor)
 
 add_subdirectory(base)
 add_subdirectory(dataloader)

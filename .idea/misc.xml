@@ -10,6 +10,8 @@
       <file path="$PROJECT_DIR$/libs/eigen" />
       <file path="$PROJECT_DIR$/libs/fmt" />
       <file path="$PROJECT_DIR$/libs/gsl" />
+      <file path="$PROJECT_DIR$/libs/xtenstor" />
+      <file path="$PROJECT_DIR$/libs/xtl" />
     </excludeRoots>
   </component>
 </project>
