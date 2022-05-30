@@ -16,3 +16,6 @@
 [submodule "libs/xtl"]
 	path = libs/xtl
 	url = https://github.com/xtensor-stack/xtl.git
+[submodule "test/gtest"]
+	path = test/gtest
+	url = https://github.com/google/googletest.git

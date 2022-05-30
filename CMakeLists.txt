@@ -20,7 +20,7 @@ add_subdirectory(dataloader)
 add_subdirectory(layer)
 add_subdirectory(model)
 add_subdirectory(utils)
-add_subdirectory(tests)
+add_subdirectory(test)
 add_subdirectory(optimizer)
 
 add_subdirectory(examples)
