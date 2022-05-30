@@ -3,7 +3,7 @@
 //
 
 #include <model/model.h>
-#include <model/basic_information.h>
+#include <model/loss_output_callback.h>
 
 #include <optimizer/mse.h>
 

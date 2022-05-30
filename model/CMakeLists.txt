@@ -4,6 +4,7 @@ target_include_directories(cppbp INTERFACE include)
 
 target_sources(cppbp
         INTERFACE model.cpp
-        INTERFACE basic_information.cpp)
+        INTERFACE loss_output_callback.cpp
+        INTERFACE accuracy_callback.cpp)
 
 
