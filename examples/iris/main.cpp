@@ -2,7 +2,6 @@
 // Created by cleve on 5/11/2022.
 //
 
-#include <layer/batch_norm.h>
 #include <layer/dropout.h>
 #include <layer/fully_connected.h>
 #include <layer/input.h>
@@ -48,11 +47,10 @@ int argmax(const Eigen::VectorXd &vals)
 
 int acc = 0;
 
-void res(Eigen::VectorXd &label, Eigen::VectorXd &ret)
+void print_result(Eigen::VectorXd &label, Eigen::VectorXd &ret)
 {
-    int a, b;
-    a = argmax(label);
-    b = argmax(ret);
+    auto a = argmax(label);
+    auto b = argmax(ret);
     if (a == b)
     {
         acc++;
@@ -88,7 +86,7 @@ int main()
     {
         auto [data, label] = iris.get(i);
         auto ret = model(data);
-        res(label, ret);
+        print_result(label, ret);
 
     }
     cout << acc << endl;
