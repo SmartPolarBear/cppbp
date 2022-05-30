@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(cppbp)
 
+include(CTest)
+
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(cppbp STATIC library.cpp)
@@ -20,7 +22,9 @@ add_subdirectory(dataloader)
 add_subdirectory(layer)
 add_subdirectory(model)
 add_subdirectory(utils)
-add_subdirectory(test)
 add_subdirectory(optimizer)
 
 add_subdirectory(examples)
+
+enable_testing()
+add_subdirectory(test)
