@@ -2,6 +2,7 @@
 
 A lightweight extensible library for constructing artificial neural network in modern C++.
 
+[![CMake](https://github.com/SmartPolarBear/cppbp/actions/workflows/cmake.yml/badge.svg)](https://github.com/SmartPolarBear/cppbp/actions/workflows/cmake.yml)
 [![issues](https://img.shields.io/github/issues/SmartPolarBear/cppbp)](https://github.com/SmartPolarBear/cppbp/issues)
 [![forks](https://img.shields.io/github/forks/SmartPolarBear/cppbp)](https://github.com/SmartPolarBear/cppbp/fork)
 [![stars](https://img.shields.io/github/stars/SmartPolarBear/cppbp)](https://github.com/SmartPolarBear/cppbp/stargazers)
