@@ -20,12 +20,12 @@
 
 namespace cppbp::layer
 {
-class BatchNorm
+class LayerNorm
         : public ILayer,
-          public utils::Counter<BatchNorm>
+          public utils::Counter<LayerNorm>
 {
 public:
-     BatchNorm();
+     LayerNorm();
 
     void backprop() override;
 
@@ -80,7 +80,6 @@ private:
 
     Eigen::VectorXd activations_;
 
-    Eigen::VectorXd deltas_;
     Eigen::VectorXd errors_;
 
     Eigen::VectorXd gammas_;

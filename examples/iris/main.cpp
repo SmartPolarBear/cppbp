@@ -4,6 +4,7 @@
 
 #include <layer/dropout.h>
 #include <layer/fully_connected.h>
+#include <layer/layer_norm.h>
 #include <layer/input.h>
 #include <layer/relu.h>
 #include <layer/softmax.h>
@@ -66,13 +67,14 @@ int main()
 
     Input in{4};
     FullyConnected fc1{5, relu};
+    LayerNorm nm{};
     FullyConnected fc2{8, sigmoid};
     DropOut drop1{0.05};
     FullyConnected fc3{12, sigmoid};
     FullyConnected out{3, softmax};
 
     CrossEntropyLoss loss{};
-    Model model{in | fc1 | fc2 | drop1 | fc3 | out, loss};
+    Model model{in | fc1 | nm | fc2 | drop1 | fc3 | out, loss};
 
     std::cout << model.summary() << endl;
 

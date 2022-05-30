@@ -11,17 +11,34 @@
 
 using namespace std;
 
-cppbp::layer::BatchNorm::BatchNorm()
-        : id_(cppbp::layer::BatchNorm::objects_alive)
+cppbp::layer::LayerNorm::LayerNorm()
+        : id_(cppbp::layer::LayerNorm::objects_alive)
 {
 }
 
-void cppbp::layer::BatchNorm::backprop()
+void cppbp::layer::LayerNorm::backprop()
 {
+    Eigen::VectorXd errors = errors_.cwiseProduct(gammas_);
 
+    const auto a = errors_.dot(gammas_);
+    const auto b = errors_.dot(gammas_.cwiseProduct(normalized_input_));
+
+    const auto H = errors_.size();
+    for (int i = 0; i < errors.size(); i++)
+    {
+        errors[i] -= (1.0 / H) * (a + b * normalized_input_[i]);
+    }
+
+    errors /= sigma_;
+
+    if (prev())
+    {
+        prev()->set_errors(errors);
+        prev()->backprop();
+    }
 }
 
-void cppbp::layer::BatchNorm::forward()
+void cppbp::layer::LayerNorm::forward()
 {
     if (next())
     {
@@ -30,7 +47,7 @@ void cppbp::layer::BatchNorm::forward()
     }
 }
 
-void cppbp::layer::BatchNorm::set(Eigen::VectorXd vec)
+void cppbp::layer::LayerNorm::set(Eigen::VectorXd vec)
 {
     Expects(!vec.hasNaN());
 
@@ -49,62 +66,74 @@ void cppbp::layer::BatchNorm::set(Eigen::VectorXd vec)
     Ensures(!activations_.hasNaN());
 }
 
-void cppbp::layer::BatchNorm::optimize(cppbp::optimizer::IOptimizer &optimizer_1)
+void cppbp::layer::LayerNorm::optimize(cppbp::optimizer::IOptimizer &opt)
 {
+    Expects(!betas_.hasNaN());
+    Expects(!gammas_.hasNaN());
 
+
+    betas_ = opt.optimize(betas_, errors_);
+    gammas_ = opt.optimize(gammas_, errors_.cwiseProduct(normalized_input_));
+
+    if (next_)
+    {
+        next_->optimize(opt);
+    }
+
+    Ensures(!betas_.hasNaN());
+    Expects(!gammas_.hasNaN());
 }
 
-void cppbp::layer::BatchNorm::set_deltas(Eigen::VectorXd dlts)
+void cppbp::layer::LayerNorm::set_deltas(Eigen::VectorXd dlts)
 {
-    deltas_ = dlts;
 }
 
-void cppbp::layer::BatchNorm::set_errors(Eigen::VectorXd errors)
+void cppbp::layer::LayerNorm::set_errors(Eigen::VectorXd errors)
 {
     errors_ = errors;
 }
 
-Eigen::VectorXd cppbp::layer::BatchNorm::get() const
+Eigen::VectorXd cppbp::layer::LayerNorm::get() const
 {
     return activations_;
 }
 
-cppbp::layer::ILayer *cppbp::layer::BatchNorm::next()
+cppbp::layer::ILayer *cppbp::layer::LayerNorm::next()
 {
     return next_;
 }
 
-cppbp::layer::ILayer *cppbp::layer::BatchNorm::prev()
+cppbp::layer::ILayer *cppbp::layer::LayerNorm::prev()
 {
     return prev_;
 }
 
-void cppbp::layer::BatchNorm::set_prev(cppbp::layer::ILayer *prev)
+void cppbp::layer::LayerNorm::set_prev(cppbp::layer::ILayer *prev)
 {
     prev_ = prev;
 }
 
-void cppbp::layer::BatchNorm::set_next(cppbp::layer::ILayer *next)
+void cppbp::layer::LayerNorm::set_next(cppbp::layer::ILayer *next)
 {
     next_ = next;
 }
 
-std::tuple<std::shared_ptr<char[]>, size_t> cppbp::layer::BatchNorm::serialize()
+std::tuple<std::shared_ptr<char[]>, size_t> cppbp::layer::LayerNorm::serialize()
 {
     return {};
 }
 
-char *cppbp::layer::BatchNorm::deserialize(char *data)
+char *cppbp::layer::LayerNorm::deserialize(char *data)
 {
     return data;
 }
 
-std::string cppbp::layer::BatchNorm::name() const
+std::string cppbp::layer::LayerNorm::name() const
 {
     return fmt::format("Layer Norm {}", id_);
 }
 
-std::string cppbp::layer::BatchNorm::summary() const
+std::string cppbp::layer::LayerNorm::summary() const
 {
     stringstream ss{};
     ss << name();
@@ -118,7 +147,7 @@ std::string cppbp::layer::BatchNorm::summary() const
     return ss.str();
 }
 
-cppbp::layer::ILayer &cppbp::layer::BatchNorm::connect(cppbp::layer::ILayer &next)
+cppbp::layer::ILayer &cppbp::layer::LayerNorm::connect(cppbp::layer::ILayer &next)
 {
     next.reshape(input_len_);
 
@@ -128,17 +157,19 @@ cppbp::layer::ILayer &cppbp::layer::BatchNorm::connect(cppbp::layer::ILayer &nex
     return next;
 }
 
-cppbp::layer::IActivationFunction &cppbp::layer::BatchNorm::activation_function()
+cppbp::layer::IActivationFunction &cppbp::layer::LayerNorm::activation_function()
 {
     return placeholder;//FIXME: should return nothing
 }
 
-cppbp::layer::ILayer &cppbp::layer::BatchNorm::operator|(cppbp::layer::ILayer &next)
+cppbp::layer::ILayer &cppbp::layer::LayerNorm::operator|(cppbp::layer::ILayer &next)
 {
     return connect(next);
 }
 
-void cppbp::layer::BatchNorm::reshape(size_t input)
+void cppbp::layer::LayerNorm::reshape(size_t input)
 {
     input_len_ = input;
+    gammas_ = Eigen::VectorXd::Random(input_len_);
+    betas_ = Eigen::VectorXd::Random(input_len_);
 }
