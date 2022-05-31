@@ -22,6 +22,7 @@ using namespace gsl;
 
 using namespace Eigen;
 
+
 cppbp::layer::FullyConnected::FullyConnected(size_t len, cppbp::layer::IActivationFunction &af)
         : act_func_(&af), len_(len), next_(nullptr)
 {

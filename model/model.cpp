@@ -266,3 +266,80 @@ uint64_t Model::magic() const
 {
     return magic_from_string<uint64_t>("MODEL000");
 }
+
+void Model::evaluate(cppbp::dataloader::DataLoader &dl,
+                     bool verbose,
+                     std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks)
+{
+    std::vector<std::shared_ptr<IModelCallback>> callbacks{};
+    if (cbks.has_value())
+    {
+        callbacks.assign(cbks.value().begin(), cbks.value().end());
+    }
+
+    if (verbose && callbacks.empty())
+    {
+        callbacks.push_back(IModelCallback::make<LossOutputCallback>());
+    }
+
+    const auto should_callback = [verbose](int64_t epoch = 0)
+    {
+        return verbose;
+    };
+
+    if (verbose)
+    {
+        for (auto &c: callbacks)
+        {
+            std::cout << c->before_world() << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    if (should_callback())
+    {
+        std::cout << "Eval...";
+        for (auto &c: callbacks)
+        {
+            std::cout << c->before_eval(1) << " ";
+        }
+        std::cout << endl;
+    }
+
+    auto batch = dl.eval_batch();
+    for (size_t step = 0; auto &[data, label]: batch)
+    {
+        auto predicts = (*this)(data);
+        auto loss = (*loss_)(predicts, label);
+        if (should_callback(0))
+        {
+            std::cout << "Step:" << step << " ";
+            for (auto &c: callbacks)
+            {
+                std::cout << c->eval_step(step, make_pair(data, label), predicts, loss) << " ";
+            }
+            std::cout << std::endl;
+        }
+
+        step++;
+    }
+
+    if (should_callback(0))
+    {
+        for (auto &c: callbacks)
+        {
+            std::cout << c->after_eval(1) << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    if (verbose)
+    {
+        for (auto &c: callbacks)
+        {
+            std::cout << c->after_world() << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+

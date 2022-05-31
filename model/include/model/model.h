@@ -19,8 +19,27 @@
 #include <vector>
 #include <optional>
 
+#include <concepts>
+
 namespace cppbp::model
 {
+
+template<typename T>
+concept IterableData=
+requires(T t)
+{
+    { t.begin() };
+    { t.end() };
+};
+
+template<typename T>
+concept SizedData=
+requires(T t, int i)
+{
+    { t.size() }->std::convertible_to<size_t>;
+    { t.get(i) };
+};
+
 class Model
         : public base::IForward,
           public base::IBackProp,
@@ -45,6 +64,34 @@ public:
              bool verbose,
              size_t callback_skip_epoch = 100,
              std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks = std::nullopt);
+
+    void evaluate(cppbp::dataloader::DataLoader &dl,
+                  bool verbose,
+                  std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks = std::nullopt);
+
+    template<IterableData T>
+    std::vector<base::VectorType> predict(const T &dataset)
+    {
+        std::vector<base::VectorType> ret{};
+        for (const auto &d: dataset)
+        {
+            const auto &[data, label] = d;
+            ret.push_back((*this)(data));
+        }
+        return ret;
+    }
+
+    template<SizedData T>
+    std::vector<base::VectorType> predict(const T &dataset)
+    {
+        std::vector<base::VectorType> ret{};
+        for (int i = 0; i < dataset.size(); i++)
+        {
+            auto [data, label] = dataset.get(i);
+            ret.push_back((*this)(data));
+        }
+        return ret;
+    }
 
     [[nodiscard]] std::string name() const override;
 
