@@ -52,9 +52,9 @@ public:
 
     void optimize(optimizer::IOptimizer &iOptimizer) override;
 
-    void save(const std::string &filename);
+    void save_state(const std::string &filename);
 
-    static inline std::optional<Model> from_file(const std::string &filename);
+    void load_state(const std::string &filename);
 
     std::ostream &serialize(std::ostream &out) override;
 

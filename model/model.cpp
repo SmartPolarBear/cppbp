@@ -226,28 +226,16 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader &dl,
     }
 }
 
-void cppbp::model::Model::save(const string &filename)
+void cppbp::model::Model::save_state(const string &filename)
 {
     ofstream ofs{filename, ios::binary};
     serialize(ofs);
 }
 
-std::optional<cppbp::model::Model> cppbp::model::Model::from_file(const string &filename)
+void cppbp::model::Model::load_state(const string &filename)
 {
-//    std::ifstream infile{filename, ios::binary};
-//
-//    infile.seekg(0, std::ios::end);
-//    size_t length = infile.tellg();
-//    infile.seekg(0, std::ios::beg);
-//
-//    auto buffer = make_unique<char[]>(length);
-//
-//    infile.read(buffer.get(), length);
-//
-//    Model mdl{};
-//    mdl.deserialize(buffer.get());
-//
-//    return mdl;
+    std::ifstream infile{filename, ios::binary};
+    deserialize(infile);
 }
 
 ostream &cppbp::model::Model::serialize(std::ostream &out)
