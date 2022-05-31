@@ -17,7 +17,10 @@
 
 #include <fstream>
 
+#include <gsl/gsl>
+
 using namespace std;
+using namespace gsl;
 
 using namespace Eigen;
 
@@ -229,12 +232,20 @@ void cppbp::model::Model::fit(cppbp::dataloader::DataLoader &dl,
 void cppbp::model::Model::save_state(const string &filename)
 {
     ofstream ofs{filename, ios::binary};
+    auto _ = finally([&]()
+                     {
+                         ofs.close();
+                     });
     serialize(ofs);
 }
 
 void cppbp::model::Model::load_state(const string &filename)
 {
     std::ifstream infile{filename, ios::binary};
+    auto _ = finally([&]()
+                     {
+                         infile.close();
+                     });
     deserialize(infile);
 }
 

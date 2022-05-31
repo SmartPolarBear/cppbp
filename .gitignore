@@ -85,3 +85,6 @@ build/*
 # vs and vscode
 .vs/
 .vscode/
+
+# mnist data
+*.*ubyte

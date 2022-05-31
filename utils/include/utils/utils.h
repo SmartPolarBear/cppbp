@@ -46,4 +46,11 @@ template<base::UIntegerType T>
     return ret;
 }
 
+template<typename T>
+void endian_swap(T &obj)
+{
+    uint8_t *memp = reinterpret_cast<uint8_t *>(&obj);
+    std::reverse(memp, memp + sizeof(T));
+}
+
 }
