@@ -58,20 +58,20 @@ void print_result(Eigen::VectorXd &label, Eigen::VectorXd &ret)
     {
         acc++;
     }
-    cout << fmt::format("Ground Truth:{}, Predict:{}", a, b) << endl;
+//    cout << fmt::format("Ground Truth:{}, Predict:{}", a, b) << endl;
 }
 
 int main()
 {
     Sigmoid sigmoid{};
     Relu relu{};
-    SoftMax softmax{};
+    Softmax softmax{};
 
     Input in{784};
     FullyConnected fc1{800, relu};
-    FullyConnected fc2{400, relu};
-    FullyConnected fc3{100, relu};
-    FullyConnected fc4{50, sigmoid};
+    FullyConnected fc2{700, relu};
+    FullyConnected fc3{400, relu};
+    FullyConnected fc4{80, sigmoid};
     FullyConnected out{10, softmax};
 
     CrossEntropyLoss loss{};
@@ -80,7 +80,7 @@ int main()
     MNISTDataset mnist{"data/train-labels.idx1-ubyte", "data/train-images.idx3-ubyte", true};
     MNISTDataset mnist_test{"data/t10k-labels.idx1-ubyte", "data/t10k-images.idx3-ubyte", true};
 
-    DataLoader dl{mnist, 16, true};
+    DataLoader dl{mnist, 16, true, 0.0005};
 
     SGDOptimizer optimizer{0.1};
 
@@ -89,7 +89,7 @@ int main()
     auto top_3_accuracy_callback = IModelCallback::make<AccuracyCallback>(vector<int>{1, 3});
 
     vector<shared_ptr<IModelCallback>> callbacks{loss_output_callback, accuracy_callback};
-    model.fit(dl, 2000, optimizer, true, 100, callbacks);
+    model.fit(dl, 1000, optimizer, true, 100, callbacks);
 
     DataLoader eval_dl{mnist_test, 16, true};
     vector<shared_ptr<IModelCallback>> eval_callbacks{loss_output_callback, top_3_accuracy_callback};
