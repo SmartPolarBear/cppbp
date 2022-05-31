@@ -5,6 +5,8 @@
 #include <model/model.h>
 #include <model/loss_output_callback.h>
 
+#include <utils/utils.h>
+
 #include <optimizer/mse.h>
 
 #include <layer/fully_connected.h>
@@ -21,306 +23,258 @@ using namespace Eigen;
 
 using namespace cppbp::layer;
 using namespace cppbp::model;
-using namespace cppbp::model::persist;
 using namespace cppbp::optimizer;
+using namespace cppbp::utils;
 
-cppbp::model::Model::Model(layer::ILayer& layer, optimizer::ILossFunction& loss)
-	: input_(&layer), output_(&layer), loss_(&loss)
+cppbp::model::Model::Model(layer::ILayer &layer, optimizer::ILossFunction &loss)
+        : input_(&layer), output_(&layer), loss_(&loss)
 {
-	while (input_->prev())
-	{
-		input_ = input_->prev();
-	}
+    while (input_->prev())
+    {
+        input_ = input_->prev();
+    }
 
-	while (output_->next())
-	{
-		output_ = output_->next();
-	}
+    while (output_->next())
+    {
+        output_ = output_->next();
+    }
 }
 
-cppbp::model::Model::Model(std::vector<layer::ILayer>& layers, optimizer::ILossFunction& loss)
-	: input_(&layers.front()), output_(&layers.back()), loss_(&loss)
+cppbp::model::Model::Model(std::vector<layer::ILayer> &layers, optimizer::ILossFunction &loss)
+        : input_(&layers.front()), output_(&layers.back()), loss_(&loss)
 {
-	for (int i = 1; i < layers.size(); ++i)
-	{
-		layers[i - 1].connect(layers[i]);
-	}
+    for (int i = 1; i < layers.size(); ++i)
+    {
+        layers[i - 1].connect(layers[i]);
+    }
 }
 
 void cppbp::model::Model::set(std::vector<double> values)
 {
-	VectorXd vec(values.size());
-	for (int i = 0; i < values.size(); i++)
-	{
-		vec[i] = values[i];
-	}
-	input_->set(vec);
+    VectorXd vec(values.size());
+    for (int i = 0; i < values.size(); i++)
+    {
+        vec[i] = values[i];
+    }
+    input_->set(vec);
 }
 
 Eigen::VectorXd cppbp::model::Model::operator()(std::vector<double> input)
 {
-	set(std::move(input));
-	input_->forward();
-	return output_->get();
+    set(std::move(input));
+    input_->forward();
+    return output_->get();
 }
 
 Eigen::VectorXd cppbp::model::Model::operator()(Eigen::VectorXd input)
 {
-	input_->set(std::move(input));
-	input_->forward();
-	return output_->get();
+    input_->set(std::move(input));
+    input_->forward();
+    return output_->get();
 }
 
 void cppbp::model::Model::forward()
 {
-	input_->forward();
+    input_->forward();
 }
 
 void cppbp::model::Model::backprop()
 {
-	output_->backprop();
+    output_->backprop();
 }
 
 std::string cppbp::model::Model::name() const
 {
-	return name_;
+    return name_;
 }
 
 std::string cppbp::model::Model::summary() const
 {
-	return input_->summary();
+    return input_->summary();
 }
 
-void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer& opt)
+void cppbp::model::Model::optimize(cppbp::optimizer::IOptimizer &opt)
 {
-	input_->optimize(opt);
-	opt.step();
+    input_->optimize(opt);
+    opt.step();
 }
 
-void cppbp::model::Model::fit(cppbp::dataloader::DataLoader& dl,
-	size_t epoch,
-	cppbp::optimizer::IOptimizer& opt,
-	bool verbose,
-	size_t callback_skip_epoch,
-	std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks)
+void cppbp::model::Model::fit(cppbp::dataloader::DataLoader &dl,
+                              size_t epoch,
+                              cppbp::optimizer::IOptimizer &opt,
+                              bool verbose,
+                              size_t callback_skip_epoch,
+                              std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks)
 {
-	std::vector<std::shared_ptr<IModelCallback>> callbacks{};
-	if (cbks.has_value())
-	{
-		callbacks.assign(cbks.value().begin(), cbks.value().end());
-	}
+    std::vector<std::shared_ptr<IModelCallback>> callbacks{};
+    if (cbks.has_value())
+    {
+        callbacks.assign(cbks.value().begin(), cbks.value().end());
+    }
 
-	if (verbose && callbacks.empty())
-	{
-		callbacks.push_back(IModelCallback::make<LossOutputCallback>());
-	}
+    if (verbose && callbacks.empty())
+    {
+        callbacks.push_back(IModelCallback::make<LossOutputCallback>());
+    }
 
-	const auto should_callback = [verbose, callback_skip_epoch](int64_t epoch)
-	{
-	  return verbose && !(epoch % callback_skip_epoch);
-	};
+    const auto should_callback = [verbose, callback_skip_epoch](int64_t epoch)
+    {
+        return verbose && !(epoch % callback_skip_epoch);
+    };
 
-	if (verbose)
-	{
-		for (auto& c : callbacks)
-		{
-			std::cout << c->before_world() << " ";
-		}
-		std::cout << std::endl;
-	}
+    if (verbose)
+    {
+        for (auto &c: callbacks)
+        {
+            std::cout << c->before_world() << " ";
+        }
+        std::cout << std::endl;
+    }
 
-	for (size_t e = 0; e < epoch; e++)
-	{
-		if (should_callback(e))
-		{
-			std::cout << "Epoch: " << e << std::endl << "Train..." << " ";
-			for (auto& c : callbacks)
-			{
-				std::cout << c->before_train(e);
-			}
-			std::cout << std::endl;
-		}
+    for (size_t e = 0; e < epoch; e++)
+    {
+        if (should_callback(e))
+        {
+            std::cout << "Epoch: " << e << std::endl << "Train..." << " ";
+            for (auto &c: callbacks)
+            {
+                std::cout << c->before_train(e);
+            }
+            std::cout << std::endl;
+        }
 
-		auto batch = dl.train_batch();
-		for (size_t step = 0; auto& [data, label] : batch)
-		{
-			auto predicts = (*this)(data);
-			auto loss = (*loss_)(predicts, label);
+        auto batch = dl.train_batch();
+        for (size_t step = 0; auto &[data, label]: batch)
+        {
+            auto predicts = (*this)(data);
+            auto loss = (*loss_)(predicts, label);
 
-			if (should_callback(e))
-			{
-				std::cout << "Step:" << step << " ";
-				for (auto& c : callbacks)
-				{
-					std::cout << c->train_step(step, make_pair(data, label), predicts, loss) << " ";
-				}
-				std::cout << std::endl;
-			}
+            if (should_callback(e))
+            {
+                std::cout << "Step:" << step << " ";
+                for (auto &c: callbacks)
+                {
+                    std::cout << c->train_step(step, make_pair(data, label), predicts, loss) << " ";
+                }
+                std::cout << std::endl;
+            }
 
-			auto errors = loss_->derive(predicts, label);
+            auto errors = loss_->derive(predicts, label);
 
-			output_->set_errors(errors);
-			this->backprop();
-			this->optimize(opt);
+            output_->set_errors(errors);
+            this->backprop();
+            this->optimize(opt);
 
-			step++;
-		}
+            step++;
+        }
 
-		if (should_callback(e))
-		{
-			for (auto& c : callbacks)
-			{
-				std::cout << c->after_train(e) << " ";
-			}
-			std::cout << endl;
-		}
+        if (should_callback(e))
+        {
+            for (auto &c: callbacks)
+            {
+                std::cout << c->after_train(e) << " ";
+            }
+            std::cout << endl;
+        }
 
-		if (should_callback(e))
-		{
-			std::cout << "Eval...";
-			for (auto& c : callbacks)
-			{
-				std::cout << c->before_eval(e) << " ";
-			}
-			std::cout << endl;
-		}
+        if (should_callback(e))
+        {
+            std::cout << "Eval...";
+            for (auto &c: callbacks)
+            {
+                std::cout << c->before_eval(e) << " ";
+            }
+            std::cout << endl;
+        }
 
-		batch = dl.eval_batch();
-		for (size_t step = 0; auto& [data, label] : batch)
-		{
-			auto predicts = (*this)(data);
-			auto loss = (*loss_)(predicts, label);
-			if (should_callback(e))
-			{
-				std::cout << "Step:" << step << " ";
-				for (auto& c : callbacks)
-				{
-					std::cout << c->eval_step(step, make_pair(data, label), predicts, loss) << " ";
-				}
-				std::cout << std::endl;
-			}
+        batch = dl.eval_batch();
+        for (size_t step = 0; auto &[data, label]: batch)
+        {
+            auto predicts = (*this)(data);
+            auto loss = (*loss_)(predicts, label);
+            if (should_callback(e))
+            {
+                std::cout << "Step:" << step << " ";
+                for (auto &c: callbacks)
+                {
+                    std::cout << c->eval_step(step, make_pair(data, label), predicts, loss) << " ";
+                }
+                std::cout << std::endl;
+            }
 
-			step++;
-		}
+            step++;
+        }
 
-		if (should_callback(e))
-		{
-			for (auto& c : callbacks)
-			{
-				std::cout << c->after_eval(e) << " ";
-			}
-			std::cout << std::endl;
-		}
+        if (should_callback(e))
+        {
+            for (auto &c: callbacks)
+            {
+                std::cout << c->after_eval(e) << " ";
+            }
+            std::cout << std::endl;
+        }
 
-	}
+    }
 
-	if (verbose)
-	{
-		for (auto& c : callbacks)
-		{
-			std::cout << c->after_world() << " ";
-		}
-		std::cout << std::endl;
-	}
+    if (verbose)
+    {
+        for (auto &c: callbacks)
+        {
+            std::cout << c->after_world() << " ";
+        }
+        std::cout << std::endl;
+    }
 }
 
-void cppbp::model::Model::save(const string& filename)
+void cppbp::model::Model::save(const string &filename)
 {
-	ofstream ofs{ filename, ios::binary };
-	auto [mem, sz] = serialize();
-	ofs.write(mem.get(), sz);
+    ofstream ofs{filename, ios::binary};
+    serialize(ofs);
 }
 
-std::optional<cppbp::model::Model> cppbp::model::Model::from_file(const string& filename)
+std::optional<cppbp::model::Model> cppbp::model::Model::from_file(const string &filename)
 {
-	std::ifstream infile{ filename, ios::binary };
-
-	infile.seekg(0, std::ios::end);
-	size_t length = infile.tellg();
-	infile.seekg(0, std::ios::beg);
-
-	auto buffer = make_unique<char[]>(length);
-
-	infile.read(buffer.get(), length);
-
-	Model mdl{};
-	mdl.deserialize(buffer.get());
-
-	return mdl;
+//    std::ifstream infile{filename, ios::binary};
+//
+//    infile.seekg(0, std::ios::end);
+//    size_t length = infile.tellg();
+//    infile.seekg(0, std::ios::beg);
+//
+//    auto buffer = make_unique<char[]>(length);
+//
+//    infile.read(buffer.get(), length);
+//
+//    Model mdl{};
+//    mdl.deserialize(buffer.get());
+//
+//    return mdl;
 }
 
-std::tuple<std::shared_ptr<char[]>, size_t> cppbp::model::Model::serialize()
+ostream &cppbp::model::Model::serialize(std::ostream &out)
 {
-	auto l = input_->next();
-	auto [mem, size] = input_->serialize();
-	auto layers = 1;
-	while (l)
-	{
-		auto [m, s] = l->serialize();
-		auto old = mem;
-
-		mem = make_shared<char[]>(size + s);
-
-		memmove(mem.get(), old.get(), size);
-		memmove(mem.get() + size, m.get(), s);
-		size += s;
-
-		l = l->next();
-		layers++;
-	}
-
-	auto full = make_shared<char[]>(size + sizeof(ModelHeader));
-	auto header = reinterpret_cast<ModelHeader*>(full.get());
-	strncpy(header->magic, HEADER_MAGIC, 8);
-	header->layer_nums = layers;
-	header->loss_func = loss_->type_id();
-	memmove(full.get() + sizeof(ModelHeader), mem.get(), size);
-
-	return { full, size + sizeof(ModelHeader) };
+    out << magic();
+    for (auto iter = input_; iter; iter = iter->next())
+    {
+        iter->serialize(out);
+    }
+    return out;
 }
 
-char* cppbp::model::Model::deserialize(char* data)
+istream &cppbp::model::Model::deserialize(istream &input)
 {
-	auto header = reinterpret_cast<ModelHeader*>(data);
-	switch (header->loss_func)
-	{
-	case 1:
-		restored_loss_ = make_shared<MSELoss>();
-		break;
-	default:
-		throw; // TODO
-	}
-	loss_ = restored_loss_.get();
+    if (!check_magic<uint64_t>(*this, input))
+    {
+        throw; //TODO
+    }
 
-	data += sizeof(ModelHeader);
-	for (int i = 0; i < header->layer_nums; i++)
-	{
-		auto desc = reinterpret_cast<LayerDescriptor*>(data);
-		shared_ptr<layer::ILayer> l{};
-		switch (desc->type)
-		{
-		case 1:
-			l = make_shared<FullyConnected>();
-			break;
-		case 2:
-			l = make_shared<Input>();
-			break;
-		default:
-			throw;
-			// TODO
-		}
+    for (auto iter = input_; iter; iter = iter->next())
+    {
+        iter->deserialize(input);
+    }
+    return input;
+}
 
-		data = l->deserialize(data);
-		restored_layers_.emplace_back(l);
-	}
-
-	input_ = restored_layers_.front().get();
-	output_ = restored_layers_.back().get();
-
-	for (int i = 0; i < restored_layers_.size() - 1; i++)
-	{
-		restored_layers_[i]->connect(*restored_layers_[i + 1]);
-	}
-
-	return data;
+uint64_t Model::magic() const
+{
+    return magic_from_string<uint64_t>("MODEL000");
 }

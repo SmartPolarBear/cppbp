@@ -2,6 +2,8 @@
 // Created by cleve on 5/24/2022.
 //
 
+#include <utils/utils.h>
+
 #include <layer/dropout.h>
 
 #include <fmt/format.h>
@@ -16,108 +18,117 @@ using namespace gsl;
 
 using namespace Eigen;
 
+using namespace cppbp::utils;
+
 cppbp::layer::DropOut::DropOut(double drop_prob)
-	: next_(nullptr), drop_prob_(drop_prob)
+        : next_(nullptr), drop_prob_(drop_prob)
 {
-	id_ = cppbp::layer::DropOut::objects_alive;
+    id_ = cppbp::layer::DropOut::objects_alive;
 }
 
 void cppbp::layer::DropOut::backprop()
 {
-	if (prev())
-	{
-		prev()->set_errors(errors_);
-		prev()->backprop();
-	}
+    if (prev())
+    {
+        prev()->set_errors(errors_);
+        prev()->backprop();
+    }
 }
 
 void cppbp::layer::DropOut::forward()
 {
-	if (next())
-	{
-		next()->set(values_);
-		next()->forward();
-	}
+    if (next())
+    {
+        next()->set(values_);
+        next()->forward();
+    }
 }
 
-cppbp::layer::ILayer* cppbp::layer::DropOut::next()
+cppbp::layer::ILayer *cppbp::layer::DropOut::next()
 {
-	return next_;
+    return next_;
 }
 
-cppbp::layer::ILayer* cppbp::layer::DropOut::prev()
+cppbp::layer::ILayer *cppbp::layer::DropOut::prev()
 {
-	return prev_;
+    return prev_;
 }
 
-void cppbp::layer::DropOut::set_prev(cppbp::layer::ILayer* prev)
+void cppbp::layer::DropOut::set_prev(cppbp::layer::ILayer *prev)
 {
-	prev_ = prev;
+    prev_ = prev;
 }
 
-void cppbp::layer::DropOut::set_next(cppbp::layer::ILayer* next)
+void cppbp::layer::DropOut::set_next(cppbp::layer::ILayer *next)
 {
-	next_ = next;
+    next_ = next;
 }
 
-std::tuple<std::shared_ptr<char[]>, size_t> cppbp::layer::DropOut::serialize()
+ostream &cppbp::layer::DropOut::serialize(std::ostream &out)
 {
-	// TODO
-	return std::tuple<std::shared_ptr<char[]>, size_t>();
+    out << magic();
+    out << drop_prob_;
+    return out;
 }
 
-char* cppbp::layer::DropOut::deserialize(char* data)
+istream &cppbp::layer::DropOut::deserialize(istream &input)
 {
-	// TODO
-	return nullptr;
+    if (!check_magic<uint16_t>(*this, input))
+    {
+        throw; //TODO
+    }
+
+    input >> drop_prob_;
+
+    return input;
 }
 
 std::string cppbp::layer::DropOut::name() const
 {
-	return fmt::format("Dropout {}", id_);
+    return fmt::format("Dropout {}", id_);
 }
 
 std::string cppbp::layer::DropOut::summary() const
 {
-	stringstream ss{};
-	ss << name() << fmt::format("[Probability: {}]", drop_prob_);
+    stringstream ss{};
+    ss << name() << fmt::format("[Probability: {}]", drop_prob_);
 
-	if (next_)
-	{
-		ss << "\n";
-		ss << next_->summary();
-	}
+    if (next_)
+    {
+        ss << "\n";
+        ss << next_->summary();
+    }
 
-	return ss.str();
+    return ss.str();
 }
 
-cppbp::layer::ILayer& cppbp::layer::DropOut::connect(cppbp::layer::ILayer& next)
+cppbp::layer::ILayer &cppbp::layer::DropOut::connect(cppbp::layer::ILayer &next)
 {
-	next.reshape(input_);
+    next.reshape(input_);
 
-	this->set_next(&next);
-	next.set_prev(this);
+    this->set_next(&next);
+    next.set_prev(this);
 
-	return next;
+    return next;
 }
 
 void cppbp::layer::DropOut::set(Eigen::VectorXd vec)
 {
-	Expects(!vec.hasNaN());
+    Expects(!vec.hasNaN());
 
-	auto p = 1 - drop_prob_;
-	VectorXd mask = ((VectorXd::Random(vec.size()) + VectorXd::Ones(vec.size())) / 2);
+    auto p = 1 - drop_prob_;
+    VectorXd mask = ((VectorXd::Random(vec.size()) + VectorXd::Ones(vec.size())) / 2);
 
-	for (int i = 0; i < mask.size(); i++)
-	{
-		mask[i] = static_cast<double>(mask[i] < p);
-	}
+    for (int i = 0; i < mask.size(); i++)
+    {
+        mask[i] = static_cast<double>(mask[i] < p);
+    }
 
-	mask /= p;
+    mask /= p;
 
-	values_ = vec.cwiseProduct(mask);
+    values_ = vec.cwiseProduct(mask);
 
-	Ensures(!values_.hasNaN());
+    Ensures(!values_.hasNaN());
 }
 
 void cppbp::layer::DropOut::set_deltas(Eigen::VectorXd deltas)
@@ -126,36 +137,41 @@ void cppbp::layer::DropOut::set_deltas(Eigen::VectorXd deltas)
 
 void cppbp::layer::DropOut::set_errors(Eigen::VectorXd errors)
 {
-	errors_ = errors;
+    errors_ = errors;
 }
 
 Eigen::VectorXd cppbp::layer::DropOut::get() const
 {
-	return values_;
+    return values_;
 }
 
-cppbp::layer::IActivationFunction& cppbp::layer::DropOut::activation_function()
+cppbp::layer::IActivationFunction &cppbp::layer::DropOut::activation_function()
 {
-	return placeholder;//FIXME: should return nothing
+    return placeholder;//FIXME: should return nothing
 }
 
-cppbp::layer::ILayer& cppbp::layer::DropOut::operator|(cppbp::layer::ILayer& next)
+cppbp::layer::ILayer &cppbp::layer::DropOut::operator|(cppbp::layer::ILayer &next)
 {
-	return connect(next);
+    return connect(next);
 }
 
 void cppbp::layer::DropOut::reshape(size_t input)
 {
-	//	if (input == weights_.cols()) return;
-	//
-	//	weights_ = MatrixXd::Random(len_, input + 1);
-	input_ = input;
+    //	if (input == weights_.cols()) return;
+    //
+    //	weights_ = MatrixXd::Random(len_, input + 1);
+    input_ = input;
 }
 
-void cppbp::layer::DropOut::optimize(cppbp::optimizer::IOptimizer& opt)
+void cppbp::layer::DropOut::optimize(cppbp::optimizer::IOptimizer &opt)
 {
-	if (next())
-	{
-		next()->optimize(opt);
-	}
+    if (next())
+    {
+        next()->optimize(opt);
+    }
+}
+
+uint16_t cppbp::layer::DropOut::magic() const
+{
+    return magic_from_string<uint16_t >("DO");
 }

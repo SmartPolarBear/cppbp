@@ -5,11 +5,11 @@
 #pragma once
 
 #include <base/serializable.h>
+#include <base/magic.h>
 
 #include <layer/layer.h>
 #include <layer/sigmoid.h>
 
-#include <model/persist.h>
 
 #include <utils/counter.h>
 
@@ -22,10 +22,11 @@ namespace cppbp::layer
 {
 class LayerNorm
         : public ILayer,
-          public utils::Counter<LayerNorm>
+          public utils::Counter<LayerNorm>,
+          public base::IMagic<uint16_t>
 {
 public:
-     LayerNorm();
+    LayerNorm();
 
     void backprop() override;
 
@@ -39,9 +40,9 @@ public:
 
     void set_next(ILayer *next) override;
 
-    std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+    std::ostream &serialize(std::ostream &out) override;
 
-    char *deserialize(char *data) override;
+    std::istream &deserialize(std::istream &input) override;
 
     std::string name() const override;
 
@@ -65,6 +66,8 @@ public:
 
     void optimize(optimizer::IOptimizer &optimizer_1) override;
 
+    uint16_t magic() const override;
+
 private:
     uint64_t id_{};
 
@@ -85,7 +88,7 @@ private:
     Eigen::VectorXd gammas_;
     Eigen::VectorXd betas_;
 
-    ILayer* next_{};
-    ILayer* prev_{};
+    ILayer *next_{};
+    ILayer *prev_{};
 };
 }// namespace cppbp::layer

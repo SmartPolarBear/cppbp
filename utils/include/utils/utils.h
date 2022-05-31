@@ -4,8 +4,12 @@
 
 #pragma once
 
+#include <base/magic.h>
+
 #include <vector>
 #include <algorithm>
+#include <span>
+#include <numeric>
 
 namespace cppbp::utils
 {
@@ -34,4 +38,12 @@ std::vector<int> argsort(const T &vals)
     });
     return ret;
 }
+
+template<base::UIntegerType T>
+[[maybe_unused]] constexpr T magic_from_string(std::string_view s)
+{
+    T ret = *reinterpret_cast<const T *>(s.data());
+    return ret;
+}
+
 }

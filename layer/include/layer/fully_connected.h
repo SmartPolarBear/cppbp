@@ -5,10 +5,10 @@
 #pragma once
 
 #include <base/serializable.h>
+#include <base/magic.h>
 
 #include <layer/layer.h>
 
-#include <model/persist.h>
 
 #include <utils/counter.h>
 
@@ -20,78 +20,76 @@
 namespace cppbp::layer
 {
 class FullyConnected
-	: public ILayer,
-	  public utils::Counter<FullyConnected>
+        : public ILayer,
+          public utils::Counter<FullyConnected>,
+          public base::IMagic<uint16_t>
 {
- public:
-	FullyConnected() = default;
+public:
+    uint16_t magic() const override;
 
-	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+    FullyConnected() = default;
 
-	char* deserialize(char* data) override;
+    std::ostream &serialize(std::ostream &out) override;
 
-	ILayer* next() override;
+    std::istream &deserialize(std::istream &input) override;
 
-	ILayer* prev() override;
+    ILayer *next() override;
 
-	explicit FullyConnected(size_t len, IActivationFunction& af);
+    ILayer *prev() override;
 
-	void reshape(size_t input) override;
+    explicit FullyConnected(size_t len, IActivationFunction &af);
 
-	void set_prev(ILayer* prev) override;
+    void reshape(size_t input) override;
 
-	void set_next(ILayer* next) override;
+    void set_prev(ILayer *prev) override;
 
-	ILayer& connect(ILayer& next) override;
+    void set_next(ILayer *next) override;
 
-	ILayer& operator|(ILayer& next) override;
+    ILayer &connect(ILayer &next) override;
 
-	void set(Eigen::VectorXd vec) override;
+    ILayer &operator|(ILayer &next) override;
 
-	[[nodiscard]] Eigen::VectorXd get() const override;
+    void set(Eigen::VectorXd vec) override;
 
-	void set_deltas(Eigen::VectorXd dlts) override;
+    [[nodiscard]] Eigen::VectorXd get() const override;
 
-	void backprop() override;
+    void set_deltas(Eigen::VectorXd dlts) override;
 
-	void forward() override;
+    void backprop() override;
 
-	void set_errors(Eigen::VectorXd errors) override;
+    void forward() override;
 
-	void optimize(optimizer::IOptimizer& opt) override;
+    void set_errors(Eigen::VectorXd errors) override;
 
-	[[nodiscard]] std::string name() const override;
+    void optimize(optimizer::IOptimizer &opt) override;
 
-	[[nodiscard]] std::string summary() const override;
+    [[nodiscard]] std::string name() const override;
 
-	IActivationFunction& activation_function() override;
+    [[nodiscard]] std::string summary() const override;
 
- private:
-	uint64_t id_{};
+    IActivationFunction &activation_function() override;
 
-	IActivationFunction* act_func_{ nullptr };
+private:
+    uint64_t id_{};
 
-	Eigen::MatrixXd weights_{};
+    IActivationFunction *act_func_{nullptr};
 
-	Eigen::VectorXd input_;
-	Eigen::VectorXd activations_;
+    Eigen::MatrixXd weights_{};
 
-	Eigen::VectorXd deltas_;
-	Eigen::VectorXd errors_;
+    Eigen::VectorXd input_;
+    Eigen::VectorXd activations_;
 
-	size_t len_{};
+    Eigen::VectorXd deltas_;
+    Eigen::VectorXd errors_;
 
-	ILayer* next_{};
-	ILayer* prev_{};
+    size_t len_{};
 
-	// To work around the lifetime issues
-	std::shared_ptr<IActivationFunction> restored_act_func_{};
+    ILayer *next_{};
+    ILayer *prev_{};
+
+    // To work around the lifetime issues
+    std::shared_ptr<IActivationFunction> restored_act_func_{};
 };
 
 }
 
-template<>
-struct cppbp::model::persist::LayerTypeId<cppbp::layer::FullyConnected>
-{
-	static inline constexpr uint32_t value = 2;
-};

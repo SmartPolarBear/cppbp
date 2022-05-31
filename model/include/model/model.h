@@ -6,12 +6,12 @@
 
 #include <layer/layer.h>
 
+#include <base/magic.h>
 #include <base/serializable.h>
 
 #include <optimizer/optimizer.h>
 #include <optimizer/loss.h>
 
-#include <model/persist.h>
 #include <model/callback.h>
 
 #include <dataloader/dataloader.h>
@@ -22,58 +22,62 @@
 namespace cppbp::model
 {
 class Model
-	: public base::IForward,
-	  public base::IBackProp,
-	  public base::ISummary,
-	  public base::INamable,
-	  public base::ISerializable,
-	  public optimizer::IOptimizable
+        : public base::IForward,
+          public base::IBackProp,
+          public base::ISummary,
+          public base::INamable,
+          public base::ISerializable,
+          public optimizer::IOptimizable,
+          public base::IMagic<uint64_t>
 {
- public:
-	explicit Model(layer::ILayer& layer, optimizer::ILossFunction& loss);
+public:
+    explicit Model(layer::ILayer &layer, optimizer::ILossFunction &loss);
 
-	explicit Model(std::vector<layer::ILayer>& layers, optimizer::ILossFunction& loss);
+    explicit Model(std::vector<layer::ILayer> &layers, optimizer::ILossFunction &loss);
 
-	Eigen::VectorXd operator()(std::vector<double> input);
-	Eigen::VectorXd operator()(Eigen::VectorXd input);
+    Eigen::VectorXd operator()(std::vector<double> input);
 
-	void fit(cppbp::dataloader::DataLoader& dl,
-		size_t epoch,
-		cppbp::optimizer::IOptimizer& opt,
-		bool verbose,
-		size_t callback_skip_epoch = 100,
-		std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks = std::nullopt);
+    Eigen::VectorXd operator()(Eigen::VectorXd input);
 
-	[[nodiscard]] std::string name() const override;
+    void fit(cppbp::dataloader::DataLoader &dl,
+             size_t epoch,
+             cppbp::optimizer::IOptimizer &opt,
+             bool verbose,
+             size_t callback_skip_epoch = 100,
+             std::optional<std::vector<std::shared_ptr<IModelCallback>>> cbks = std::nullopt);
 
-	[[nodiscard]] std::string summary() const override;
+    [[nodiscard]] std::string name() const override;
 
-	void optimize(optimizer::IOptimizer& iOptimizer) override;
+    [[nodiscard]] std::string summary() const override;
 
-	void save(const std::string& filename);
+    void optimize(optimizer::IOptimizer &iOptimizer) override;
 
-	static inline std::optional<Model> from_file(const std::string& filename);
+    void save(const std::string &filename);
 
-	std::tuple<std::shared_ptr<char[]>, size_t> serialize() override;
+    static inline std::optional<Model> from_file(const std::string &filename);
 
-	char* deserialize(char* data) override;
+    std::ostream &serialize(std::ostream &out) override;
 
- private:
-	Model() = default;
+    std::istream &deserialize(std::istream &input) override;
 
-	void set(std::vector<double> values);
+    uint64_t magic() const override;
 
-	void forward() override;
+private:
+    Model() = default;
 
-	void backprop() override;
+    void set(std::vector<double> values);
 
-	layer::ILayer* input_{}, * output_{};
-	std::string name_{ "Model" };
-	optimizer::ILossFunction* loss_{};
+    void forward() override;
 
-	// To work around lifetime issues
-	std::shared_ptr<optimizer::ILossFunction> restored_loss_{};
-	std::vector<std::shared_ptr<layer::ILayer>> restored_layers_{};
+    void backprop() override;
+
+    layer::ILayer *input_{}, *output_{};
+    std::string name_{"Model"};
+    optimizer::ILossFunction *loss_{};
+
+    // To work around lifetime issues
+    std::shared_ptr<optimizer::ILossFunction> restored_loss_{};
+    std::vector<std::shared_ptr<layer::ILayer>> restored_layers_{};
 
 };
 }

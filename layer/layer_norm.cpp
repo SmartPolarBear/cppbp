@@ -3,6 +3,7 @@
 //
 
 #include <layer/layer_norm.h>
+#include <utils/utils.h>
 
 #include <sstream>
 
@@ -10,6 +11,8 @@
 #include <gsl/assert>
 
 using namespace std;
+
+using namespace cppbp::utils;
 
 cppbp::layer::LayerNorm::LayerNorm()
         : id_(cppbp::layer::LayerNorm::objects_alive)
@@ -118,14 +121,42 @@ void cppbp::layer::LayerNorm::set_next(cppbp::layer::ILayer *next)
     next_ = next;
 }
 
-std::tuple<std::shared_ptr<char[]>, size_t> cppbp::layer::LayerNorm::serialize()
+ostream &cppbp::layer::LayerNorm::serialize(std::ostream &out)
 {
-    return {};
+    out << magic();
+    out << gammas_.size();
+    for (int i = 0; i < gammas_.size(); i++)
+    {
+        out << gammas_.coeffRef(i);
+    }
+    out << betas_.size();
+    for (int i = 0; i < betas_.size(); i++)
+    {
+        out << betas_.coeffRef(i);
+    }
+    return out;
 }
 
-char *cppbp::layer::LayerNorm::deserialize(char *data)
+istream &cppbp::layer::LayerNorm::deserialize(istream &input)
 {
-    return data;
+    if (!check_magic<uint16_t>(*this, input))
+    {
+        throw; //TODO
+    }
+    int gamma_size{0};
+    input >> gamma_size;
+    for (int i = 0; i < gamma_size; i++)
+    {
+        input >> gammas_.coeffRef(i);
+    }
+
+    int beta_size{0};
+    input >> beta_size;
+    for (int i = 0; i < beta_size; i++)
+    {
+        input >> betas_.coeffRef(i);
+    }
+    return input;
 }
 
 std::string cppbp::layer::LayerNorm::name() const
@@ -172,4 +203,9 @@ void cppbp::layer::LayerNorm::reshape(size_t input)
     input_len_ = input;
     gammas_ = Eigen::VectorXd::Random(input_len_);
     betas_ = Eigen::VectorXd::Random(input_len_);
+}
+
+uint16_t cppbp::layer::LayerNorm::magic() const
+{
+    return magic_from_string<uint16_t>("LN");
 }
