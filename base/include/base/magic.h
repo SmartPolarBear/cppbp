@@ -5,6 +5,7 @@
 
 #include <concepts>
 #include <cstdint>
+#include <stdexcept>
 #include <fstream>
 
 namespace cppbp::base
@@ -28,5 +29,15 @@ template<base::UIntegerType T>
     stm >> magic;
     return magic == mgc.magic();
 }
+
+class magic_checking_failure
+        : public std::runtime_error
+{
+public:
+    magic_checking_failure()
+            : std::runtime_error("Error checking magic number!")
+    {}
+};
+
 
 }

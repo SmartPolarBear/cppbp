@@ -193,7 +193,8 @@ istream &cppbp::layer::FullyConnected::deserialize(istream &input)
 {
     if (!check_magic<uint16_t>(*this, input))
     {
-        throw; //TODO
+        throw base::magic_checking_failure{};
+
     }
 
     int32_t size{0}, rows{0}, cols{0};

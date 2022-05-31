@@ -6,6 +6,8 @@
 #include <layer/xavier_initializer.h>
 #include <layer/random_initializer.h>
 
+#include <base/exceptions.h>
+
 #include <algorithm>
 #include <iostream>
 
@@ -25,12 +27,12 @@ double cppbp::layer::softmax::operator()(double x)
 
 double cppbp::layer::softmax::eval(double x)
 {
-    return 0.0;//TODO:throw
+    throw base::not_implemented{};
 }
 
 double cppbp::layer::softmax::derive(double y)
 {
-    return 0.0;//TODO:throw
+    throw base::not_implemented{};
 }
 
 Eigen::VectorXd cppbp::layer::softmax::eval(Eigen::VectorXd x)
@@ -55,7 +57,8 @@ Eigen::MatrixXd cppbp::layer::softmax::derive(Eigen::VectorXd y)
             if (i == j)
             {
                 ret(i, j) = y[i] * (1 - y[i]);
-            } else
+            }
+            else
             {
                 ret(i, j) = -y[i] * y[j];
             }

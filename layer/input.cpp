@@ -134,7 +134,7 @@ istream &cppbp::layer::Input::deserialize(istream &input)
 {
     if (!check_magic<uint16_t>(*this, input))
     {
-        throw; //TODO
+        throw base::magic_checking_failure{};
     }
 
     input >> len_;

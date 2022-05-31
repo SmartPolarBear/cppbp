@@ -252,7 +252,7 @@ istream &cppbp::model::Model::deserialize(istream &input)
 {
     if (!check_magic<uint64_t>(*this, input))
     {
-        throw; //TODO
+        throw base::magic_checking_failure{};
     }
 
     for (auto iter = input_; iter; iter = iter->next())

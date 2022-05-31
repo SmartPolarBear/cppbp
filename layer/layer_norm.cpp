@@ -141,8 +141,9 @@ istream &cppbp::layer::LayerNorm::deserialize(istream &input)
 {
     if (!check_magic<uint16_t>(*this, input))
     {
-        throw; //TODO
+        throw base::magic_checking_failure{};
     }
+
     int gamma_size{0};
     input >> gamma_size;
     for (int i = 0; i < gamma_size; i++)

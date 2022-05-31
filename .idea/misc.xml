@@ -12,6 +12,7 @@
       <file path="$PROJECT_DIR$/libs/gsl" />
       <file path="$PROJECT_DIR$/libs/xtenstor" />
       <file path="$PROJECT_DIR$/libs/xtl" />
+      <file path="$PROJECT_DIR$/test/gtest" />
     </excludeRoots>
   </component>
 </project>

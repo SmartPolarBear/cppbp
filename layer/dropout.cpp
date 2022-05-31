@@ -2,6 +2,8 @@
 // Created by cleve on 5/24/2022.
 //
 
+#include <base/magic.h>
+
 #include <utils/utils.h>
 
 #include <layer/dropout.h>
@@ -75,7 +77,7 @@ istream &cppbp::layer::DropOut::deserialize(istream &input)
 {
     if (!check_magic<uint16_t>(*this, input))
     {
-        throw; //TODO
+        throw base::magic_checking_failure{};
     }
 
     input >> drop_prob_;
@@ -173,5 +175,5 @@ void cppbp::layer::DropOut::optimize(cppbp::optimizer::IOptimizer &opt)
 
 uint16_t cppbp::layer::DropOut::magic() const
 {
-    return magic_from_string<uint16_t >("DO");
+    return magic_from_string<uint16_t>("DO");
 }
