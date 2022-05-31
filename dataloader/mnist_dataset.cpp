@@ -21,32 +21,41 @@ using namespace gsl;
 using namespace Eigen;
 
 MNISTDataset::MNISTDataset(std::string label_path, std::string img_path, bool regularize)
-        : IDataset(), label_path_(std::move(label_path)), img_path_(std::move(label_path)), regularize_(regularize)
+        : IDataset(), label_path_(std::move(label_path)), img_path_(std::move(img_path)), regularize_(regularize)
 {
     load_labels();
     load_images();
 
     if (regularize_)
     {
-        base::VectorType sum = base::VectorType::Zero(imgs_[0].size());
-        base::VectorType squared = base::VectorType::Zero(imgs_[0].size());
-
-        for (const auto& vec: imgs_)
-        {
-            sum += vec;
-            squared += vec.cwiseProduct(vec);
-        }
-
-        sum /= imgs_.size();
-        squared /= imgs_.size();
-
-        VectorXd variance((squared - sum.cwiseProduct(sum)).array().sqrt());
-
-        for (auto &d: imgs_)
-        {
-            d -= sum;
-            d = d.cwiseQuotient(variance);
-        }
+//        base::VectorType sum = base::VectorType::Zero(imgs_[0].size());
+//        base::VectorType squared = base::VectorType::Zero(imgs_[0].size());
+//
+//        for (const auto &vec: imgs_)
+//        {
+//            sum += vec;
+//            squared += vec.cwiseProduct(vec);
+//        }
+//
+//        sum /= imgs_.size();
+//        squared /= imgs_.size();
+//
+//        VectorXd variance((squared - sum.cwiseProduct(sum)).array().sqrt());
+//
+//        for (auto &d: imgs_)
+//        {
+//            if (d.hasNaN())
+//            {
+//                int a = 0;
+//            }
+//            d -= sum;
+//            d = d.cwiseQuotient(variance);
+//            if (d.hasNaN())
+//            {
+//                cout << variance;
+//                int a = 0;
+//            }
+//        }
     }
 }
 
@@ -75,8 +84,8 @@ void MNISTDataset::load_labels()
     uint32_t magic_number = 0;
     uint32_t number_of_images = 0;
 
-    file >> magic_number;
-    file >> number_of_images;
+    file.read((char *) &magic_number, sizeof(magic_number));
+    file.read((char *) &number_of_images, sizeof(number_of_images));
 
     endian_swap(magic_number);
     endian_swap(number_of_images);
@@ -84,8 +93,8 @@ void MNISTDataset::load_labels()
     for (int i = 0; i < number_of_images; ++i)
     {
         uint8_t num = 0;
-        file >> num;
-        base::VectorType vec(10);
+        file.read((char *) &num, sizeof(num));
+        base::VectorType vec = VectorXd::Zero(10);
         vec.coeffRef(num) = 1;
         lbls_.push_back(vec);
     }
@@ -108,10 +117,12 @@ void MNISTDataset::load_images()
     uint32_t rows = 0;
     uint32_t cols = 0;
 
-    file >> magic_number;
-    file >> img_cnt;
-    file >> rows;
-    file >> cols;
+
+    file.read((char *) &magic_number, sizeof(magic_number));
+    file.read((char *) &img_cnt, sizeof(img_cnt));
+    file.read((char *) &rows, sizeof(rows));
+    file.read((char *) &cols, sizeof(cols));
+
 
     endian_swap(magic_number);
     endian_swap(img_cnt);
@@ -126,7 +137,9 @@ void MNISTDataset::load_images()
         {
             for (int c = 0; c < cols; ++c)
             {
-                file >> vec.coeffRef(cnt++);
+                uint8_t num = 0;
+                file.read((char *) &num, sizeof(num));
+                vec.coeffRef(cnt++) = num / 255.0;
             }
         }
         imgs_.push_back(vec);

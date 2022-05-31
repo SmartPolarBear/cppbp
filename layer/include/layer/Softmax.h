@@ -7,11 +7,11 @@
 
 namespace cppbp::layer
 {
-class softmax
+class Softmax
         : public IActivationFunction
 {
 public:
-    softmax() = default;
+    Softmax() = default;
 
     std::shared_ptr<IWeightInitializer> default_initializer() override;
 

@@ -149,7 +149,8 @@ cppbp::layer::IActivationFunction &cppbp::layer::FullyConnected::activation_func
 
 void cppbp::layer::FullyConnected::reshape(size_t input)
 {
-    if (input == weights_.cols()) return;
+    if (input == weights_.cols())
+        return;
 
     if (act_func_)
     {
@@ -201,7 +202,7 @@ istream &cppbp::layer::FullyConnected::deserialize(istream &input)
     int32_t size{0}, rows{0}, cols{0};
     input >> size >> rows >> cols;
 
-    weights_ = MatrixType(rows, cols);
+    weights_ = MatrixType::Zero(rows, cols);
 
     for (int i = 0; i < size; i++)
     {

@@ -7,7 +7,7 @@
 #include <layer/layer_norm.h>
 #include <layer/input.h>
 #include <layer/relu.h>
-#include <layer/softmax.h>
+#include <layer/Softmax.h>
 
 #include <model/model.h>
 #include <model/loss_output_callback.h>
@@ -65,7 +65,7 @@ int main()
 {
     Sigmoid sigmoid{};
     Relu relu{};
-    softmax softmax{};
+    Softmax softmax{};
 
     Input in{4};
     FullyConnected fc1{5, relu};

@@ -7,7 +7,7 @@
 #include <layer/layer_norm.h>
 #include <layer/input.h>
 #include <layer/relu.h>
-#include <layer/softmax.h>
+#include <layer/Softmax.h>
 
 #include <model/model.h>
 #include <model/loss_output_callback.h>
@@ -18,7 +18,7 @@
 #include <optimizer/sgd_optimizer.h>
 
 #include <dataloader/dataloader.h>
-#include <dataloader/iris_dataset.h>
+#include <dataloader/mnist_dataset.h>
 
 #include <fmt/format.h>
 
@@ -65,24 +65,22 @@ int main()
 {
     Sigmoid sigmoid{};
     Relu relu{};
-    softmax softmax{};
+    SoftMax softmax{};
 
-    Input in{4};
-    FullyConnected fc1{5, relu};
-//    LayerNorm ln{};
-    FullyConnected fc2{8, sigmoid};
-    DropOut drop1{0.05};
-    FullyConnected fc3{12, sigmoid};
-    FullyConnected out{3, softmax};
+    Input in{784};
+    FullyConnected fc1{800, relu};
+    FullyConnected fc2{400, relu};
+    FullyConnected fc3{100, relu};
+    FullyConnected fc4{50, sigmoid};
+    FullyConnected out{10, softmax};
 
     CrossEntropyLoss loss{};
-//    Model model{in | fc1 | ln | fc2 | drop1 | fc3 | out, loss};
-    Model model{in | fc1 | fc2 | drop1 | fc3 | out, loss};
+    Model model{in | fc1 | fc2 | fc3 | fc4 | out, loss};
 
-    std::cout << model.summary() << endl;
+    MNISTDataset mnist{"data/train-labels.idx1-ubyte", "data/train-images.idx3-ubyte", true};
+    MNISTDataset mnist_test{"data/t10k-labels.idx1-ubyte", "data/t10k-images.idx3-ubyte", true};
 
-    IrisDataset iris{"data/iris.data", true};
-    DataLoader dl{iris, 16, true};
+    DataLoader dl{mnist, 16, true};
 
     SGDOptimizer optimizer{0.1};
 
@@ -93,14 +91,15 @@ int main()
     vector<shared_ptr<IModelCallback>> callbacks{loss_output_callback, accuracy_callback};
     model.fit(dl, 2000, optimizer, true, 100, callbacks);
 
+    DataLoader eval_dl{mnist_test, 16, true};
     vector<shared_ptr<IModelCallback>> eval_callbacks{loss_output_callback, top_3_accuracy_callback};
-    model.evaluate(dl, true, eval_callbacks);
+    model.evaluate(eval_dl, true, eval_callbacks);
 
-    auto result = model.predict(iris);
+    auto result = model.predict(mnist_test);
 
-    for (int i = 0; i < iris.size(); i++)
+    for (int i = 0; i < mnist_test.size(); i++)
     {
-        auto [data, label] = iris.get(i);
+        auto [data, label] = mnist_test.get(i);
         print_result(label, result[i]);
     }
 

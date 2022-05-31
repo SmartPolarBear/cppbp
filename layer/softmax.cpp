@@ -2,7 +2,7 @@
 // Created by 九黎千明 on 2022/5/24.
 //
 
-#include <layer/softmax.h>
+#include <layer/Softmax.h>
 #include <layer/xavier_initializer.h>
 #include <layer/random_initializer.h>
 
@@ -20,22 +20,22 @@ using namespace cppbp::layer;
 
 using namespace Eigen;
 
-double cppbp::layer::softmax::operator()(double x)
+double cppbp::layer::Softmax::operator()(double x)
 {
     return eval(x);
 }
 
-double cppbp::layer::softmax::eval(double x)
+double cppbp::layer::Softmax::eval(double x)
 {
     throw base::not_implemented{};
 }
 
-double cppbp::layer::softmax::derive(double y)
+double cppbp::layer::Softmax::derive(double y)
 {
     throw base::not_implemented{};
 }
 
-Eigen::VectorXd cppbp::layer::softmax::eval(Eigen::VectorXd x)
+Eigen::VectorXd cppbp::layer::Softmax::eval(Eigen::VectorXd x)
 {
     Expects(!x.hasNaN());
 
@@ -47,7 +47,7 @@ Eigen::VectorXd cppbp::layer::softmax::eval(Eigen::VectorXd x)
     return ret;
 }
 
-Eigen::MatrixXd cppbp::layer::softmax::derive(Eigen::VectorXd y)
+Eigen::MatrixXd cppbp::layer::Softmax::derive(Eigen::VectorXd y)
 {
     Eigen::MatrixXd ret = Eigen::MatrixXd::Zero(y.size(), y.size());
     for (int i = 0; i < y.size(); i++)
@@ -67,12 +67,12 @@ Eigen::MatrixXd cppbp::layer::softmax::derive(Eigen::VectorXd y)
     return ret;
 }
 
-uint32_t cppbp::layer::softmax::type_id()
+uint32_t cppbp::layer::Softmax::type_id()
 {
     return 1;
 }
 
-shared_ptr<IWeightInitializer> cppbp::layer::softmax::default_initializer()
+shared_ptr<IWeightInitializer> cppbp::layer::Softmax::default_initializer()
 {
     return IWeightInitializer::make<RandomInitializer>();
 }
