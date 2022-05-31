@@ -17,7 +17,7 @@ class AccuracyCallback
 public:
     AccuracyCallback();
 
-    explicit AccuracyCallback(std::initializer_list<int> k);
+    explicit AccuracyCallback(std::vector<int> k);
 
     std::string before_world() override;
 

@@ -7,6 +7,7 @@
 #include <utils/utils.h>
 
 #include <sstream>
+#include <utility>
 
 #include <fmt/format.h>
 
@@ -18,10 +19,9 @@ cppbp::model::AccuracyCallback::AccuracyCallback()
 
 }
 
-cppbp::model::AccuracyCallback::AccuracyCallback(std::initializer_list<int> k)
-        : k_(k)
+cppbp::model::AccuracyCallback::AccuracyCallback(std::vector<int> k)
+        : k_(std::move(k))
 {
-
 }
 
 std::string cppbp::model::AccuracyCallback::before_world()
@@ -72,7 +72,7 @@ std::string cppbp::model::AccuracyCallback::after_train(size_t epoch)
     stringstream ss{};
     for (auto k: k_)
     {
-        ss << fmt::format("Top {} accuracy: {} ", k, accurate_[k] / static_cast<double>(total_));
+        ss << fmt::format("Top {} accuracy: {};", k, accurate_[k] / static_cast<double>(total_));
     }
     return ss.str();
 }
