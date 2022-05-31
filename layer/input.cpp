@@ -5,6 +5,8 @@
 #include <layer/input.h>
 #include <utils/utils.h>
 
+#include <base/exceptions.h>
+
 
 #include <fmt/format.h>
 
@@ -92,7 +94,8 @@ Eigen::VectorXd cppbp::layer::Input::get() const
 
 cppbp::layer::IActivationFunction &cppbp::layer::Input::activation_function()
 {
-    return placeholder; //FIXME: should return nothing
+    throw base::not_implemented{};
+
 }
 
 cppbp::layer::ILayer &cppbp::layer::Input::operator|(cppbp::layer::ILayer &next)

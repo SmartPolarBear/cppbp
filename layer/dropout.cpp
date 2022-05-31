@@ -3,6 +3,7 @@
 //
 
 #include <base/magic.h>
+#include <base/exceptions.h>
 
 #include <utils/utils.h>
 
@@ -149,7 +150,7 @@ Eigen::VectorXd cppbp::layer::DropOut::get() const
 
 cppbp::layer::IActivationFunction &cppbp::layer::DropOut::activation_function()
 {
-    return placeholder;//FIXME: should return nothing
+    throw base::not_implemented{};
 }
 
 cppbp::layer::ILayer &cppbp::layer::DropOut::operator|(cppbp::layer::ILayer &next)

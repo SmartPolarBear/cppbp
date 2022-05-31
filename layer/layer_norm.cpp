@@ -5,6 +5,8 @@
 #include <layer/layer_norm.h>
 #include <utils/utils.h>
 
+#include <base/exceptions.h>
+
 #include <sstream>
 
 #include <fmt/format.h>
@@ -191,7 +193,7 @@ cppbp::layer::ILayer &cppbp::layer::LayerNorm::connect(cppbp::layer::ILayer &nex
 
 cppbp::layer::IActivationFunction &cppbp::layer::LayerNorm::activation_function()
 {
-    return placeholder;//FIXME: should return nothing
+    throw base::not_implemented{};
 }
 
 cppbp::layer::ILayer &cppbp::layer::LayerNorm::operator|(cppbp::layer::ILayer &next)
